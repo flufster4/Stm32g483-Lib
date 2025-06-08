@@ -1,0 +1,5 @@
+../Src/lib/analog/dac.c:10:6:set_dac	6
+../Src/lib/analog/dac.c:30:6:set_dac_software_trigger	5
+../Src/lib/analog/dac.c:44:6:set_dac_value	11
+../Src/lib/analog/dac.c:73:14:get_dac_value	3
+../Src/lib/analog/dac.c:85:6:set_dac_cal_offset	1

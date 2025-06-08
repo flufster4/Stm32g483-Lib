@@ -1,0 +1,8 @@
+# ninja log v6
+5	219	1749152396313817440	CMakeFiles/test.dir/Src/lib/digital/gpio.c.o	e6ea342f1c3832be
+5	219	1749152396313950813	CMakeFiles/test.dir/Src/lib/analog/dac.c.o	21fd28b791ef88d0
+6	219	1749152396314092603	CMakeFiles/test.dir/Src/lib/analog/adc.c.o	50a19967650b108a
+5	219	1749152396313273863	CMakeFiles/test.dir/Src/main.c.o	bde24d887f2fb388
+5	225	1749152396313543568	CMakeFiles/test.dir/Src/syscalls.c.o	1d4e183ad6b36b37
+2	33	1749152437475189223	CMakeFiles/test.dir/Src/main.c.o	bde24d887f2fb388
+3	34	1749152437475659301	CMakeFiles/test.dir/Src/lib/dma.c.o	212a99a41ff19d31

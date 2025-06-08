@@ -1,0 +1,5 @@
+../Src/lib/analog/dac.c:10:6:set_dac	16	static
+../Src/lib/analog/dac.c:30:6:set_dac_software_trigger	16	static
+../Src/lib/analog/dac.c:44:6:set_dac_value	24	static
+../Src/lib/analog/dac.c:73:14:get_dac_value	16	static
+../Src/lib/analog/dac.c:85:6:set_dac_cal_offset	32	static

@@ -1,0 +1,5 @@
+../Src/lib/dma.c:10:28:default_dma_channel_config	56	static
+../Src/lib/dma.c:29:31:default_dmamux_channel_config	24	static
+../Src/lib/dma.c:40:6:configure_dmamux_channel	32	static
+../Src/lib/dma.c:52:6:configure_dma_channel	48	static
+../Src/lib/dma.c:79:6:set_dma_channel	32	static

@@ -1,0 +1,8 @@
+"./Src/lib/analog/adc.o"
+"./Src/lib/analog/dac.o"
+"./Src/lib/digital/gpio.o"
+"./Src/lib/dma.o"
+"./Src/main.o"
+"./Src/syscalls.o"
+"./Src/sysmem.o"
+"./Startup/startup_stm32g483cetx.o"

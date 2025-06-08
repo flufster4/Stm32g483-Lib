@@ -1,0 +1,6 @@
+../Src/lib/analog/adc.c:10:6:set_adc	16	static
+../Src/lib/analog/adc.c:24:6:set_adc_voltage_regulator	24	static
+../Src/lib/analog/adc.c:31:6:calibrate_adc	32	static
+../Src/lib/analog/adc.c:50:6:set_adc_sampling_time	24	static
+../Src/lib/analog/adc.c:66:19:default_adc_configuration	48	static
+../Src/lib/analog/adc.c:89:6:configure_adc	16	static

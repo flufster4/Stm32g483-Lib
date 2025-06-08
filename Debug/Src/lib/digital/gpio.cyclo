@@ -1,0 +1,4 @@
+../Src/lib/digital/gpio.c:10:6:configure_gpio	1
+../Src/lib/digital/gpio.c:29:6:set_gpio_pin	2
+../Src/lib/digital/gpio.c:35:10:read_gpio_pin	1
+../Src/lib/digital/gpio.c:39:6:toggle_gpio_pin	1
