@@ -1,7 +1,0 @@
-"./Src/main.o"
-"./Src/syscalls.o"
-"./Src/sysmem.o"
-"./Src/stm/analog/dac.o"
-"./Src/stm/digital/gpio.o"
-"./Src/stm/sys/rcc.o"
-"./Startup/startup_stm32g483cetx.o"

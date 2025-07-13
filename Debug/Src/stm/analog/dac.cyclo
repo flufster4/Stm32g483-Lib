@@ -1,7 +1,0 @@
-../Src/stm/analog/dac.cpp:12:21:uint32_t stm32::analog::dac::_get_enable_mask(Channel)	5
-../Src/stm/analog/dac.cpp:21:10:void stm32::analog::dac::Dac::disable(stm32::analog::dac::Channel) const	1
-../Src/stm/analog/dac.cpp:26:10:void stm32::analog::dac::Dac::enable(stm32::analog::dac::Channel) const	1
-../Src/stm/analog/dac.cpp:31:12:stm32::analog::dac::Status stm32::analog::dac::Dac::getStatus(stm32::analog::dac::Channel) const	2
-../Src/stm/analog/dac.cpp:45:14:uint16_t stm32::analog::dac::Dac::getOutputValue(stm32::analog::dac::Channel) const	3
-../Src/stm/analog/dac.cpp:55:10:void stm32::analog::dac::_setOutputValue8(uint8_t, Channel, DacRegisters*)	5
-../Src/stm/analog/dac.cpp:72:10:void stm32::analog::dac::Dac::setOutputValue(uint16_t, stm32::analog::dac::Channel, stm32::analog::dac::DataAlignment, stm32::analog::dac::DataResolution) const	7
