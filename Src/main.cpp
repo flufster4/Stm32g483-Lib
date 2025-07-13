@@ -18,9 +18,9 @@
 
 #include <stdint.h>
 
-#include "../Inc/stm/digital/gpio.h"
-#include "../Inc/stm/sys/rcc.h"
-#include "../Inc/stm/analog/dac.h"
+#include "../Inc/stm/digital/Gpio.h"
+#include "../Inc/stm/sys/Rcc.h"
+#include "../Inc/stm/analog/Dac.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."

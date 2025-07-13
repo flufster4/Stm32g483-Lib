@@ -5,15 +5,15 @@ set(CMAKE_CXX_STANDARD 26)
 
 set(SOURCES
     Src/main.cpp
-    Src/stm/sys/rcc.cpp
-    Inc/stm/sys/rcc.h
-    Src/stm/digital/gpio.cpp
-    Inc/stm/digital/gpio.h
-    Src/stm/analog/dac.cpp
-    Inc/stm/analog/dac.h
-    Src/stm/analog/dacChannelConfigurationBuilder.cpp
-    Src/stm/analog/adc.cpp
-    Inc/stm/analog/adc.h
+        Src/stm/sys/Rcc.cpp
+        Inc/stm/sys/Rcc.h
+        Src/stm/digital/Gpio.cpp
+        Inc/stm/digital/Gpio.h
+        Src/stm/analog/Dac.cpp
+        Inc/stm/analog/Dac.h
+        Src/stm/analog/DacChannelConfigurationBuilder.cpp
+        Src/stm/analog/Adc.cpp
+        Inc/stm/analog/Adc.h
 )
 
 add_executable(cplusplus ${SOURCES})

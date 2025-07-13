@@ -5,7 +5,7 @@
  *      Author: markian
  */
 
-#include "../../../Inc/stm/analog/dac.h"
+#include "../../../Inc/stm/analog/Dac.h"
 
 namespace stm32::analog::dac {
 

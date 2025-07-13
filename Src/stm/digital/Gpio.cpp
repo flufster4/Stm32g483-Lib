@@ -4,7 +4,7 @@
  *  Created on: Jul 9, 2025
  *      Author: markian
  */
-#include "../../../Inc/stm/digital/gpio.h"
+#include "../../../Inc/stm/digital/Gpio.h"
 
 namespace stm32::digital::gpio {
 

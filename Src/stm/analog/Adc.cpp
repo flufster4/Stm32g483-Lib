@@ -5,7 +5,7 @@
  *      Author: markian
  */
 
-#include "../../../Inc/stm/analog/adc.h"
+#include "../../../Inc/stm/analog/Adc.h"
 
 namespace stm32::analog::adc {
 
