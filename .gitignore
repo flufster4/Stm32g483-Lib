@@ -1,0 +1,6 @@
+/Debug/
+/.settings/
+/cmake-build-debug/
+./cplusplus Debug.launch
+./.cproject
+./.project
