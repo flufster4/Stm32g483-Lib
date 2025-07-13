@@ -1,0 +1,4 @@
+../Src/stm/digital/gpio.cpp:11:10:void stm32::digital::gpio::Gpio::configureGpio(uint8_t, stm32::digital::gpio::GpioConfiguration&) const	24	static
+../Src/stm/digital/gpio.cpp:28:10:void stm32::digital::gpio::Gpio::writeGpio(uint8_t, bool) const	16	static
+../Src/stm/digital/gpio.cpp:38:10:void stm32::digital::gpio::Gpio::toggleGpio(uint8_t) const	16	static
+../Src/stm/digital/gpio.cpp:44:10:bool stm32::digital::gpio::Gpio::readGpio(uint8_t) const	16	static

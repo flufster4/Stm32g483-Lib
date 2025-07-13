@@ -1,0 +1,4 @@
+../Src/../Inc/stm/digital/gpio.h:61:18:stm32::digital::gpio::Gpio::Gpio(uint32_t)	1
+../Src/../Inc/stm/analog/dac.h:41:18:stm32::analog::dac::Dac::Dac(uint32_t)	1
+../Src/../Inc/stm/analog/dac.h:51:49:static constexpr uint16_t stm32::analog::dac::Dac::voltageToValue(uint16_t, stm32::analog::dac::DataResolution, uint16_t)	2
+../Src/main.cpp:29:5:int main()	1
