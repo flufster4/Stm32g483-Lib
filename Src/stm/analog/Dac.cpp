@@ -28,12 +28,12 @@ namespace stm32::analog::dac {
         dacRegisters->CR |= mask;
     }
 
-    Status Dac::getStatus(const Channel channel) const {
+    DacStatus Dac::getStatus(const Channel channel) const {
         uint8_t offset = 11;
         if (channel == Channel::Channel2)
             offset = 27;
 
-        return Status{
+        return DacStatus{
             static_cast<bool>(dacRegisters->SR & 1 << offset),
             static_cast<bool>(dacRegisters->SR & 1 << (offset + 1)),
             static_cast<bool>(dacRegisters->SR & 1 << (offset + 2)),

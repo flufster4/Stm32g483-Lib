@@ -14,7 +14,7 @@ namespace stm32::analog::dac {
          DOR1, DOR2, SR, CCR, MCR, SHSR1, SHSR2, SHHR, SHRR, r0[2], STR1, STR2, STMODR, r1[2];
     };
 
-    struct Status {
+    struct DacStatus {
         bool ready, outputRegisterStatus, dmaUnderrun, calibrationOffsetStatus, busyWriting;
     };
 
@@ -95,9 +95,9 @@ namespace stm32::analog::dac {
         void setOutputValue(uint16_t value, Channel channel, DataAlignment alignment = DataAlignment::Right, DataResolution resolution = DataResolution::TwelveBit) const;
         [[nodiscard]] uint16_t getOutputValue(Channel channel) const;
 
-        [[nodiscard]] Status getStatus(Channel channel) const;
+        [[nodiscard]] DacStatus getStatus(Channel channel) const;
 
-        [[nodiscard]] constexpr static uint16_t voltageToValue(uint16_t millivolts, DataResolution dacResolution, uint16_t vref = 3300) {
+        [[nodiscard]] constexpr static uint16_t voltageToValue(const uint16_t millivolts, const DataResolution dacResolution, const uint16_t vref = 3300) {
             const uint16_t maxCode = dacResolution == DataResolution::TwelveBit ? 4095 : 255;
             return (static_cast<uint32_t>(millivolts) * maxCode + vref / 2) / vref;
         }

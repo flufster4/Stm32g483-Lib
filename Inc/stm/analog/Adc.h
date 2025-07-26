@@ -15,6 +15,14 @@ namespace stm32::analog::adc {
         DIFSEL, CALDFACT, r7[2], GCOMP;
     };
 
+    struct AdcCommonRegisters {
+        volatile uint8_t CSR, r0, CCR, CDR;
+    };
+
+    struct AdcStatus {
+        bool ready, eosmp, eoconv, eoseq, overrun, jeoconv, jeoseq, watchdog1, watchdog2, watchdog3, jqovf;
+    };
+
     struct AdcConfiguration {
 
     };
@@ -36,5 +44,7 @@ namespace stm32::analog::adc {
         void stopInjectedConversion() const;
 
         void configureAdc(const AdcConfiguration& config) const;
+
+        [[nodiscard]] AdcStatus getStatus() const;
     };
 }

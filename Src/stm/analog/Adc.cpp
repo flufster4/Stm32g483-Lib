@@ -41,6 +41,22 @@ namespace stm32::analog::adc {
         adcRegisters->CR |= enable << 29;
     }
 
+    AdcStatus Adc::getStatus() const {
+        AdcStatus status = {};
+        status.ready = adcRegisters->ISR & 1;
+        status.eosmp = adcRegisters->ISR & (1 << 1);
+        status.eoconv = adcRegisters->ISR & (1 << 2);
+        status.eoseq = adcRegisters->ISR & (1 << 3);
+        status.overrun = adcRegisters->ISR & (1 << 4);
+        status.jeoconv = adcRegisters->ISR & (1 << 5);
+        status.jeoseq = adcRegisters->ISR & (1 << 6);
+        status.watchdog1 = adcRegisters->ISR & (1 << 7);
+        status.watchdog2 = adcRegisters->ISR & (1 << 8);
+        status.watchdog3 = adcRegisters->ISR & (1 << 9);
+        status.jqovf = adcRegisters->ISR & (1 << 10);
+        return status;
+    }
+
 
 }
 

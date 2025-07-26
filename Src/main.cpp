@@ -28,14 +28,16 @@
 
 int main(void)
 {
-    volatile stm32::system::RccRegisters* rcc = reinterpret_cast<stm32::system::RccRegisters*>(0X4002'1000);
+    using namespace stm32;
 
-    stm32::digital::gpio::Gpio gpioA(0x4800'0000);
-    stm32::digital::gpio::GpioPinConfiguration outputPinConfig{};
-    stm32::digital::gpio::GpioPinConfiguration dacPinConfig(stm32::digital::gpio::PinMode::Analog);
+    volatile system::RccRegisters* rcc = reinterpret_cast<system::RccRegisters*>(0X4002'1000);
 
-    stm32::analog::dac::Dac dac1(0x5000'0800);
-    stm32::analog::dac::DacChannelConfiguration dac1configuration = {};
+    digital::gpio::Gpio gpioA(0x4800'0000);
+    digital::gpio::GpioPinConfiguration outputPinConfig{};
+    digital::gpio::GpioPinConfiguration dacPinConfig(digital::gpio::PinMode::Analog);
+
+    analog::dac::Dac dac1(0x5000'0800);
+    analog::dac::DacChannelConfiguration dac1configuration = {};
 
     rcc->AHB2ENR |= 0x1;
     rcc->AHB2ENR |= 0x1 << 16;
@@ -44,13 +46,13 @@ int main(void)
     gpioA.configureGpio(4, dacPinConfig);
     gpioA.writeGpio(0, true);
 
-    dac1.disable(stm32::analog::dac::Channel::Channel1);
-    dac1.configure(dac1configuration, stm32::analog::dac::Channel::Channel1);
+    dac1.disable(analog::dac::Channel::Channel1);
+    dac1.configure(dac1configuration, analog::dac::Channel::Channel1);
     dac1.setOutputValue(
-        stm32::analog::dac::Dac::voltageToValue(1652, stm32::analog::dac::DataResolution::TwelveBit),
-        stm32::analog::dac::Channel::Channel1
+        analog::dac::Dac::voltageToValue(1652, analog::dac::DataResolution::TwelveBit),
+        analog::dac::Channel::Channel1
         );
-    dac1.enable(stm32::analog::dac::Channel::Channel1);
+    dac1.enable(analog::dac::Channel::Channel1);
 
 
     /* Loop forever */
