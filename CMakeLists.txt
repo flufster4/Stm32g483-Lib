@@ -4,7 +4,7 @@ project(cplusplus)
 set(CMAKE_CXX_STANDARD 26)
 
 set(SOURCES
-    Src/main.cpp
+        Src/main.cpp
         Src/stm/sys/Rcc.cpp
         Inc/stm/sys/Rcc.h
         Src/stm/digital/Gpio.cpp

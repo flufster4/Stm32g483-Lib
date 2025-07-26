@@ -31,11 +31,11 @@ int main(void)
     volatile stm32::system::RccRegisters* rcc = reinterpret_cast<stm32::system::RccRegisters*>(0X4002'1000);
 
     stm32::digital::gpio::Gpio gpioA(0x4800'0000);
-    stm32::digital::gpio::GpioConfiguration outputPinConfig{};
-    stm32::digital::gpio::GpioConfiguration dacPinConfig(stm32::digital::gpio::PinMode::Analog);
+    stm32::digital::gpio::GpioPinConfiguration outputPinConfig{};
+    stm32::digital::gpio::GpioPinConfiguration dacPinConfig(stm32::digital::gpio::PinMode::Analog);
 
     stm32::analog::dac::Dac dac1(0x5000'0800);
-    stm32::analog::dac::ChannelConfiguration dac1configuration = {};
+    stm32::analog::dac::DacChannelConfiguration dac1configuration = {};
 
     rcc->AHB2ENR |= 0x1;
     rcc->AHB2ENR |= 0x1 << 16;

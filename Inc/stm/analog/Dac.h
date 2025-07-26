@@ -47,7 +47,7 @@ namespace stm32::analog::dac {
         Over160MHz = 2
     };
 
-    struct ChannelConfiguration {
+    struct DacChannelConfiguration {
         bool enableTrigger = false;
         uint8_t triggerSelection = 0;
         WaveGeneration waveGeneration = WaveGeneration::Disabled;
@@ -59,26 +59,26 @@ namespace stm32::analog::dac {
         uint8_t sampleTime = 0, holdTime = 1, refreshTime = 1;
     };
 
-    class ChannelConfigurationBuilder {
-        ChannelConfiguration configuration;
+    class DacChannelConfigurationBuilder {
+        DacChannelConfiguration configuration;
 
     public:
-        ChannelConfigurationBuilder() = default;
+        DacChannelConfigurationBuilder() = default;
 
-        ChannelConfigurationBuilder& enableTrigger(bool enable = true);
-        ChannelConfigurationBuilder& setTriggerSelection(uint8_t triggerSelection);
-        ChannelConfigurationBuilder& setWaveGeneration(WaveGeneration waveGeneration);
-        ChannelConfigurationBuilder& setWaveMaskSelection(uint8_t waveMaskSelection);
-        ChannelConfigurationBuilder& enableDma(bool enable = true);
-        ChannelConfigurationBuilder& enableDmaUnderrunInterrupt(bool enable = true);
-        ChannelConfigurationBuilder& enableSoftwareTrigger(bool enable = true);
-        ChannelConfigurationBuilder& enableDmaDoubleDataMode(bool enable = true);
-        ChannelConfigurationBuilder& enableSignedMode(bool enable = true);
-        ChannelConfigurationBuilder& setChannelMode(uint8_t mode);
-        ChannelConfigurationBuilder& setHighFrequencyInterfaceMode(HighFrequencyInterfaceMode mode);
-        ChannelConfigurationBuilder& setSampleAndHoldTime(uint8_t sampleTime, uint8_t holdTime, uint8_t refreshTime);
+        DacChannelConfigurationBuilder& enableTrigger(bool enable = true);
+        DacChannelConfigurationBuilder& setTriggerSelection(uint8_t triggerSelection);
+        DacChannelConfigurationBuilder& setWaveGeneration(WaveGeneration waveGeneration);
+        DacChannelConfigurationBuilder& setWaveMaskSelection(uint8_t waveMaskSelection);
+        DacChannelConfigurationBuilder& enableDma(bool enable = true);
+        DacChannelConfigurationBuilder& enableDmaUnderrunInterrupt(bool enable = true);
+        DacChannelConfigurationBuilder& enableSoftwareTrigger(bool enable = true);
+        DacChannelConfigurationBuilder& enableDmaDoubleDataMode(bool enable = true);
+        DacChannelConfigurationBuilder& enableSignedMode(bool enable = true);
+        DacChannelConfigurationBuilder& setChannelMode(uint8_t mode);
+        DacChannelConfigurationBuilder& setHighFrequencyInterfaceMode(HighFrequencyInterfaceMode mode);
+        DacChannelConfigurationBuilder& setSampleAndHoldTime(uint8_t sampleTime, uint8_t holdTime, uint8_t refreshTime);
 
-        [[nodiscard]] ChannelConfiguration build() const;
+        [[nodiscard]] DacChannelConfiguration build() const;
     };
 
     class Dac {
@@ -90,7 +90,7 @@ namespace stm32::analog::dac {
         void enable(Channel channel) const;
         void disable(Channel channel) const;
 
-        void configure(ChannelConfiguration& configuration, Channel channel) const;
+        void configure(DacChannelConfiguration& configuration, Channel channel) const;
 
         void setOutputValue(uint16_t value, Channel channel, DataAlignment alignment = DataAlignment::Right, DataResolution resolution = DataResolution::TwelveBit) const;
         [[nodiscard]] uint16_t getOutputValue(Channel channel) const;

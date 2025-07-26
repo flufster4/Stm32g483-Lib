@@ -8,7 +8,7 @@
 
 namespace stm32::digital::gpio {
 
-    void Gpio::configureGpio(const uint8_t pin, GpioConfiguration &configuration) const {
+    void Gpio::configureGpio(const uint8_t pin, GpioPinConfiguration &configuration) const {
         if (pin > 15)
             return;
 

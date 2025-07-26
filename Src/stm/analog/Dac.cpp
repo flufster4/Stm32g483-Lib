@@ -105,7 +105,7 @@ namespace stm32::analog::dac {
         }
     }
 
-    void Dac::configure(ChannelConfiguration &configuration, const Channel channel) const {
+    void Dac::configure(DacChannelConfiguration &configuration, const Channel channel) const {
         const uint8_t offset = (channel == Channel::Channel2) ? 16 : 0;
 
         if (channel == Channel::Dual) {

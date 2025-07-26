@@ -40,13 +40,13 @@ namespace stm32::digital::gpio {
         PullDown
     };
 
-    struct GpioConfiguration {
+    struct GpioPinConfiguration {
         PinMode mode;
         PinType type;
         PinSpeed speed;
         PinPull pull;
 
-        explicit constexpr GpioConfiguration(
+        explicit constexpr GpioPinConfiguration(
             const PinMode mode = PinMode::Output,
             const PinType type = PinType::PushPull,
             const PinSpeed speed = PinSpeed::Low,
@@ -60,7 +60,7 @@ namespace stm32::digital::gpio {
     public:
         explicit Gpio(const uint32_t gpioBaseAddress) : gpioRegisters(reinterpret_cast<GpioRegisters*>(gpioBaseAddress)) {}
 
-        void configureGpio(uint8_t pin, GpioConfiguration &configuration) const;
+        void configureGpio(uint8_t pin, GpioPinConfiguration &configuration) const;
 
         void writeGpio(uint8_t pin, bool on = true) const;
 
