@@ -21,6 +21,7 @@
 #include "../Inc/stm/digital/Gpio.h"
 #include "../Inc/stm/sys/Rcc.h"
 #include "../Inc/stm/analog/Dac.h"
+#include "../Inc/stm/analog/Adc.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -39,12 +40,15 @@ int main(void)
     analog::dac::Dac dac1(0x5000'0800);
     analog::dac::DacChannelConfiguration dac1configuration = {};
 
+    analog::adc::Adc adc1(0x5000'0000);
+
     rcc->AHB2ENR |= 0x1;
     rcc->AHB2ENR |= 0x1 << 16;
+    rcc->AHB2ENR |= 0x1 << 13;
     asm("nop; nop; nop");
-    gpioA.configureGpio(0, outputPinConfig);
+
+    gpioA.configureGpio(0, dacPinConfig);
     gpioA.configureGpio(4, dacPinConfig);
-    gpioA.writeGpio(0, true);
 
     dac1.disable(analog::dac::Channel::Channel1);
     dac1.configure(dac1configuration, analog::dac::Channel::Channel1);
@@ -54,8 +58,27 @@ int main(void)
         );
     dac1.enable(analog::dac::Channel::Channel1);
 
+    adc1.disable();
+    adc1.setDeepPowerDown(false);
+    adc1.setVoltageRegulator(true);
+    for (uint32_t i = 10000; i > 0; i--) {}
+
+    adc1.setSamplingTime(analog::adc::AdcSamplingTime::CYCLES_24_5, 1);
+
+    analog::adc::AdcConversionSequence coversionSequence = analog::adc::AdcConversionSequenceBuilder(1).build();
+    adc1.setConversionSequence(coversionSequence);
+
+    adc1.enable();
+    adc1.startConversion();
 
     /* Loop forever */
-	for(;;);
+	for(;;) {
+		while (!adc1.getStatus().eoconv) {}
+		dac1.setOutputValue(
+			adc1.getValue(),
+			analog::dac::Channel::Channel1
+		);
+		adc1.startConversion();
+	}
 
 }

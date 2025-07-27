@@ -12,9 +12,21 @@ namespace stm32::analog::adc {
 
     AdcConversionSequenceBuilder& AdcConversionSequenceBuilder::then(const uint8_t nextConversion) {
         if (sequenceLength >= conversions.size())
-            conversions[sequenceLength++] = nextConversion;
+            return *this;
+        conversions[sequenceLength++] = nextConversion;
         return *this;
     }
+
+    AdcConversionSequenceBuilder &AdcConversionSequenceBuilder::withConversionAtPosition(const uint8_t conversion, const uint8_t position) {
+        if (position > conversions.size())
+            return *this;
+        if (sequenceLength < position)
+            sequenceLength = position;
+
+        conversions[position] = conversion;
+        return *this;
+    }
+
 
     AdcConversionSequence AdcConversionSequenceBuilder::build() const {
         return {sequenceLength, conversions};

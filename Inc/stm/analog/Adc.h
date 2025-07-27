@@ -20,6 +20,17 @@ namespace stm32::analog::adc {
         volatile uint8_t CSR, r0, CCR, CDR;
     };
 
+    enum class AdcSamplingTime : uint8_t {
+        CYCLES_2_5,
+        CYCLES_6_5,
+        CYCLES_12_5,
+        CYCLES_24_5,
+        CYCLES_47_5,
+        CYCLES_92_5,
+        CYCLES_247_5,
+        CYCLES_640_5
+    };
+
     struct AdcStatus {
         bool ready, eosmp, eoconv, eoseq, overrun, jeoconv, jeoseq, watchdog1, watchdog2, watchdog3, jqovf;
     };
@@ -44,6 +55,7 @@ namespace stm32::analog::adc {
         [[nodiscard]] static AdcConversionSequenceBuilder from(AdcConversionSequence& sequence);
 
         AdcConversionSequenceBuilder& then(uint8_t nextConversion);
+        AdcConversionSequenceBuilder& withConversionAtPosition(uint8_t conversion, uint8_t position);
         [[nodiscard]] AdcConversionSequence build() const;
 
         [[nodiscard]] size_t getSequenceLength() const;
@@ -67,6 +79,10 @@ namespace stm32::analog::adc {
         void stopInjectedConversion() const;
 
         void configureAdc(const AdcConfiguration& config) const;
+        void setConversionSequence(const AdcConversionSequence& sequence) const;
+        void setSamplingTime(AdcSamplingTime samplingTime, uint8_t channel, bool additionalCycle = false) const;
+
+        [[nodiscard]] uint16_t getValue() const;
 
         [[nodiscard]] AdcStatus getStatus() const;
     };

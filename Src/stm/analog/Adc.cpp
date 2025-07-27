@@ -46,6 +46,61 @@ namespace stm32::analog::adc {
         adcRegisters->CR |= enable << 28;
     }
 
+    void Adc::setConversionSequence(const AdcConversionSequence& sequence) const {
+        constexpr uint8_t conversionMask = 0x1F;
+        uint32_t mask = (conversionMask << 24) | (conversionMask << 18) | (conversionMask << 12) | (conversionMask << 6) | 0xF;
+
+        adcRegisters->SQR1 &= ~mask;
+        adcRegisters->SQR1 |= (sequence.sequenceLength & 0xF);
+        adcRegisters->SQR1 |= (sequence.conversions[0] & conversionMask) << 6;
+        adcRegisters->SQR1 |= (sequence.conversions[1] & conversionMask) << 12;
+        adcRegisters->SQR1 |= (sequence.conversions[2] & conversionMask) << 18;
+        adcRegisters->SQR1 |= (sequence.conversions[3] & conversionMask) << 24;
+
+        if (sequence.sequenceLength <= 4)
+            return;
+        mask |= (1 << 5);
+        adcRegisters->SQR2 &= ~mask;
+        adcRegisters->SQR2 |= (sequence.conversions[4] & conversionMask);
+        adcRegisters->SQR2 |= (sequence.conversions[5] & conversionMask) << 6;
+        adcRegisters->SQR2 |= (sequence.conversions[6] & conversionMask) << 12;
+        adcRegisters->SQR2 |= (sequence.conversions[7] & conversionMask) << 18;
+        adcRegisters->SQR2 |= (sequence.conversions[8] & conversionMask) << 24;
+
+        if(sequence.sequenceLength <= 9)
+            return;
+        adcRegisters->SQR3 &= ~mask;
+        adcRegisters->SQR3 |= (sequence.conversions[9] & conversionMask);
+        adcRegisters->SQR3 |= (sequence.conversions[10] & conversionMask) << 6;
+        adcRegisters->SQR3 |= (sequence.conversions[11] & conversionMask) << 12;
+        adcRegisters->SQR3 |= (sequence.conversions[12] & conversionMask) << 18;
+        adcRegisters->SQR3 |= (sequence.conversions[13] & conversionMask) << 24;
+
+        if(sequence.sequenceLength <= 14)
+            return;
+        adcRegisters->SQR4 &= ~(conversionMask | (conversionMask << 6));
+        adcRegisters->SQR4 |= (sequence.conversions[14] & conversionMask);
+        adcRegisters->SQR4 |= (sequence.conversions[15] & conversionMask) << 6;
+    }
+
+    void Adc::setSamplingTime(const AdcSamplingTime samplingTime, const uint8_t channel, const bool additionalCycle) const {
+        if(channel > 18)
+            return;
+
+        adcRegisters->SMPR1 &= ~(1 << 31);
+        adcRegisters->SMPR1 |= (additionalCycle << 31);
+
+        volatile uint32_t* reg = &adcRegisters->SMPR1;
+        if (channel > 9)
+            reg = &adcRegisters->SMPR2;
+
+        *reg &= ~(0x8 << (channel * 3));
+        *reg |= ((static_cast<uint8_t>(samplingTime) & 0x8) << (channel * 3));
+    }
+
+    uint16_t Adc::getValue() const {
+        return static_cast<uint16_t>(adcRegisters->DR & 0xFFFF);
+    }
 
     AdcStatus Adc::getStatus() const {
         AdcStatus status = {};
