@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include <array>
 #include <cstdint>
 
 namespace stm32::analog::adc {
@@ -25,6 +26,28 @@ namespace stm32::analog::adc {
 
     struct AdcConfiguration {
 
+    };
+
+    struct AdcConversionSequence {
+        size_t sequenceLength;
+        std::array<uint8_t, 16> conversions;
+    };
+
+    class AdcConversionSequenceBuilder {
+        size_t sequenceLength = 0;
+        std::array<uint8_t, 16> conversions{};
+
+        AdcConversionSequenceBuilder(const size_t sequenceLength, const std::array<uint8_t, 16> conversions) : sequenceLength(sequenceLength), conversions(conversions) {}
+
+    public:
+        explicit AdcConversionSequenceBuilder(const uint8_t firstConversion) : sequenceLength(1), conversions({firstConversion}) {}
+        [[nodiscard]] static AdcConversionSequenceBuilder from(AdcConversionSequence& sequence);
+
+        AdcConversionSequenceBuilder& then(uint8_t nextConversion);
+        [[nodiscard]] AdcConversionSequence build() const;
+
+        [[nodiscard]] size_t getSequenceLength() const;
+        [[nodiscard]] const std::array<uint8_t, 16>& getConversions() const;
     };
 
     class Adc {

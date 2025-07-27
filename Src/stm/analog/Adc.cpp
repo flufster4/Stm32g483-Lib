@@ -41,6 +41,12 @@ namespace stm32::analog::adc {
         adcRegisters->CR |= enable << 29;
     }
 
+    void Adc::setVoltageRegulator(const bool enable) const {
+        adcRegisters->CR &= ~(1 << 28);
+        adcRegisters->CR |= enable << 28;
+    }
+
+
     AdcStatus Adc::getStatus() const {
         AdcStatus status = {};
         status.ready = adcRegisters->ISR & 1;
