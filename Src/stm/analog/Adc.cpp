@@ -94,13 +94,24 @@ namespace stm32::analog::adc {
         if (channel > 9)
             reg = &adcRegisters->SMPR2;
 
-        *reg &= ~(0x8 << (channel * 3));
-        *reg |= ((static_cast<uint8_t>(samplingTime) & 0x8) << (channel * 3));
+        *reg &= ~(0x7 << (channel * 3));
+        *reg |= ((static_cast<uint8_t>(samplingTime) & 0x7) << (channel * 3));
     }
 
     uint16_t Adc::getValue() const {
-        return static_cast<uint16_t>(adcRegisters->DR & 0xFFFF);
+        return static_cast<uint16_t>(adcRegisters->DR);
     }
+
+    AdcCalibration Adc::calibrateAdc() const {
+        adcRegisters->CR |= 1 << 31;
+        while (adcRegisters->CR & (1 << 31)) {}
+
+        return AdcCalibration{
+            static_cast<uint8_t>(adcRegisters->CALDFACT & 0x7F),
+            static_cast<uint8_t>((adcRegisters->CALDFACT & (0x7F << 16)) >> 16)
+        };
+    }
+
 
     AdcStatus Adc::getStatus() const {
         AdcStatus status = {};

@@ -44,6 +44,8 @@ int main(void)
 
     rcc->AHB2ENR |= 0x1;
     rcc->AHB2ENR |= 0x1 << 16;
+	rcc->CCIPR &= ~(0b11 << 28);
+	rcc->CCIPR |= 0b10 << 28;
     rcc->AHB2ENR |= 0x1 << 13;
     asm("nop; nop; nop");
 
@@ -58,10 +60,11 @@ int main(void)
         );
     dac1.enable(analog::dac::Channel::Channel1);
 
-    adc1.disable();
     adc1.setDeepPowerDown(false);
     adc1.setVoltageRegulator(true);
-    for (uint32_t i = 10000; i > 0; i--) {}
+    for (volatile uint32_t i = 100000; i > 0; i--) {}
+
+	adc1.calibrateAdc();
 
     adc1.setSamplingTime(analog::adc::AdcSamplingTime::CYCLES_24_5, 1);
 
@@ -74,8 +77,9 @@ int main(void)
     /* Loop forever */
 	for(;;) {
 		while (!adc1.getStatus().eoconv) {}
+		uint16_t adcValue = adc1.getValue();
 		dac1.setOutputValue(
-			adc1.getValue(),
+			adcValue,
 			analog::dac::Channel::Channel1
 		);
 		adc1.startConversion();

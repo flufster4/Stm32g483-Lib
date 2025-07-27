@@ -8,6 +8,7 @@
 #pragma once
 #include <array>
 #include <cstdint>
+#include <cstddef>
 
 namespace stm32::analog::adc {
     struct AdcRegisters {
@@ -37,6 +38,10 @@ namespace stm32::analog::adc {
 
     struct AdcConfiguration {
 
+    };
+
+    struct AdcCalibration {
+        uint8_t S, D;
     };
 
     struct AdcConversionSequence {
@@ -81,6 +86,9 @@ namespace stm32::analog::adc {
         void configureAdc(const AdcConfiguration& config) const;
         void setConversionSequence(const AdcConversionSequence& sequence) const;
         void setSamplingTime(AdcSamplingTime samplingTime, uint8_t channel, bool additionalCycle = false) const;
+
+        AdcCalibration calibrateAdc() const;
+        void calibrateAdc(AdcCalibration& calibration) const;
 
         [[nodiscard]] uint16_t getValue() const;
 
