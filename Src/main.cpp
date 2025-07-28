@@ -68,8 +68,8 @@ int main(void)
 
     adc1.setSamplingTime(analog::adc::AdcSamplingTime::CYCLES_24_5, 1);
 
-    analog::adc::AdcConversionSequence coversionSequence = analog::adc::AdcConversionSequenceBuilder(1).build();
-    adc1.setConversionSequence(coversionSequence);
+    analog::adc::AdcConversionSequence conversionSequence = analog::adc::AdcConversionSequenceBuilder(1).build();
+    adc1.setConversionSequence(conversionSequence);
 
     adc1.enable();
     adc1.startConversion();

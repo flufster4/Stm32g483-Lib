@@ -132,6 +132,10 @@ namespace stm32::analog::adc {
         adcRegisters->CALDFACT |= ((calibration.D & 0x7F) << 16);
     }
 
+    void Adc::configureAdc(const AdcConfiguration &config) const {
+
+    }
+
 
     AdcStatus Adc::getStatus() const {
         AdcStatus status = {};
