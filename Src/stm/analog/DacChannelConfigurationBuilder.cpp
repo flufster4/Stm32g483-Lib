@@ -77,7 +77,6 @@ namespace stm32::analog::dac {
         return *this;
     }
 
-
     DacChannelConfiguration DacChannelConfigurationBuilder::build() const {
         return this->configuration;
     }

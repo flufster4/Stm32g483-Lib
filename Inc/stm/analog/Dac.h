@@ -19,43 +19,43 @@ namespace stm32::analog::dac {
     };
 
     enum class Channel {
-        Channel1,
-        Channel2,
-        Dual
+        CHANNEL1,
+        CHANNEL2,
+        DUAL
     };
 
     enum class DataAlignment {
-        Left,
-        Right
+        LEFT,
+        RIGHT
     };
 
     enum class DataResolution {
-        EightBit,
-        TwelveBit
+        EIGHT_BIT,
+        TWELVE_BIT
     };
 
     enum class WaveGeneration : uint8_t {
-        Disabled = 0,
-        Noise = 1,
-        Triangle = 2,
-        Sawtooth = 3
+        DISBLED = 0,
+        NOISE = 1,
+        TRIANGLE = 2,
+        SAWTOOTH = 3
     };
 
     enum class HighFrequencyInterfaceMode : uint8_t {
-        Disabled = 0,
-        Over80MHz = 1,
-        Over160MHz = 2
+        DISABLED = 0,
+        OVER80MHz = 1,
+        OVER160MHz = 2
     };
 
     struct DacChannelConfiguration {
         bool enableTrigger = false;
         uint8_t triggerSelection = 0;
-        WaveGeneration waveGeneration = WaveGeneration::Disabled;
+        WaveGeneration waveGeneration = WaveGeneration::DISBLED;
         uint8_t waveMaskSelection = 0;
         bool enableDma = false, enableDmaUnderrunInterrupt = false, enableSoftwareTrigger = false,
             enableDmaDoubleDataMode = false, enableSignedMode = false;
         uint8_t mode = 0;
-        HighFrequencyInterfaceMode highFrequencyInterfaceMode = HighFrequencyInterfaceMode::Disabled;
+        HighFrequencyInterfaceMode highFrequencyInterfaceMode = HighFrequencyInterfaceMode::DISABLED;
         uint8_t sampleTime = 0, holdTime = 1, refreshTime = 1;
     };
 
@@ -92,13 +92,13 @@ namespace stm32::analog::dac {
 
         void configure(DacChannelConfiguration& configuration, Channel channel) const;
 
-        void setOutputValue(uint16_t value, Channel channel, DataAlignment alignment = DataAlignment::Right, DataResolution resolution = DataResolution::TwelveBit) const;
+        void setOutputValue(uint16_t value, Channel channel, DataAlignment alignment = DataAlignment::RIGHT, DataResolution resolution = DataResolution::TWELVE_BIT) const;
         [[nodiscard]] uint16_t getOutputValue(Channel channel) const;
 
         [[nodiscard]] DacStatus getStatus(Channel channel) const;
 
         [[nodiscard]] constexpr static uint16_t voltageToValue(const uint16_t millivolts, const DataResolution dacResolution, const uint16_t vref = 3300) {
-            const uint16_t maxCode = dacResolution == DataResolution::TwelveBit ? 4095 : 255;
+            const uint16_t maxCode = dacResolution == DataResolution::TWELVE_BIT ? 4095 : 255;
             return (static_cast<uint32_t>(millivolts) * maxCode + vref / 2) / vref;
         }
     };

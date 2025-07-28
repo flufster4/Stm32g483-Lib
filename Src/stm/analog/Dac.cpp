@@ -11,9 +11,9 @@ namespace stm32::analog::dac {
 
     inline uint32_t _get_enable_mask(const Channel channel) {
         switch (channel) {
-            case Channel::Channel1: return 1;
-            case Channel::Channel2: return 1 << 16;
-            case Channel::Dual: return 1 | 1 << 16;
+            case Channel::CHANNEL1: return 1;
+            case Channel::CHANNEL2: return 1 << 16;
+            case Channel::DUAL: return 1 | 1 << 16;
         }
         return 1;
     }
@@ -30,7 +30,7 @@ namespace stm32::analog::dac {
 
     DacStatus Dac::getStatus(const Channel channel) const {
         uint8_t offset = 11;
-        if (channel == Channel::Channel2)
+        if (channel == Channel::CHANNEL2)
             offset = 27;
 
         return DacStatus{
@@ -47,22 +47,22 @@ namespace stm32::analog::dac {
         const uint8_t alignmentFactor = b ? 16 : 0;
         const uint32_t mask = 0x7FF << alignmentFactor;
 
-        if (channel == Channel::Channel2)
+        if (channel == Channel::CHANNEL2)
             return static_cast<uint16_t>((dacRegisters->DOR2 & mask) >> alignmentFactor);
         return static_cast<uint16_t>((dacRegisters->DOR1 & mask) >> alignmentFactor);
     }
 
     void _setOutputValue8(const uint8_t value, const Channel channel, DacRegisters* dacRegisters) {
         switch (channel) {
-            case Channel::Channel1:
+            case Channel::CHANNEL1:
                 dacRegisters->DHR8R1 &= ~0xFF;
                 dacRegisters->DHR8R1 |= value;
                 break;
-            case Channel::Channel2:
+            case Channel::CHANNEL2:
                 dacRegisters->DHR8R2 &= ~0xFF;
                 dacRegisters->DHR8R2 |= value;
                 break;
-            case Channel::Dual:
+            case Channel::DUAL:
                 dacRegisters->DHR8RD &= ~0xFFFF;
                 dacRegisters->DHR8RD |= value | value << 8;
                 break;
@@ -70,26 +70,26 @@ namespace stm32::analog::dac {
     }
 
     void Dac::setOutputValue(const uint16_t value, const Channel channel, const DataAlignment alignment, const DataResolution resolution) const {
-        if (resolution == DataResolution::EightBit) {
+        if (resolution == DataResolution::EIGHT_BIT) {
             _setOutputValue8(static_cast<uint8_t>(value), channel, dacRegisters);
             return;
         }
 
         volatile uint32_t* reg = nullptr;
         switch (channel) {
-            case Channel::Channel2: reg = &dacRegisters->DHR12R2; break;
-            case Channel::Dual: reg = &dacRegisters->DHR12RD; break;
+            case Channel::CHANNEL2: reg = &dacRegisters->DHR12R2; break;
+            case Channel::DUAL: reg = &dacRegisters->DHR12RD; break;
             default: reg = &dacRegisters->DHR12R1; break;
         }
 
         constexpr uint16_t mask = 0xFFF;
 
-        if (alignment == DataAlignment::Left) {
+        if (alignment == DataAlignment::LEFT) {
             reg += 1;
             *reg &= ~(mask << 4);
             *reg |= (value & mask) << 4;
 
-            if (channel == Channel::Dual) {
+            if (channel == Channel::DUAL) {
                 *reg &= ~(mask << 20);
                 *reg |= (value & mask) << 20;
             }
@@ -99,18 +99,18 @@ namespace stm32::analog::dac {
 
         *reg &= ~mask;
         *reg |= value & mask;
-        if (channel == Channel::Dual) {
+        if (channel == Channel::DUAL) {
             *reg &= ~(mask << 16);
             *reg |= (value & mask) << 16;
         }
     }
 
     void Dac::configure(DacChannelConfiguration &configuration, const Channel channel) const {
-        const uint8_t offset = (channel == Channel::Channel2) ? 16 : 0;
+        const uint8_t offset = (channel == Channel::CHANNEL2) ? 16 : 0;
 
-        if (channel == Channel::Dual) {
-            configure(configuration, Channel::Channel1);
-            configure(configuration, Channel::Channel2);
+        if (channel == Channel::DUAL) {
+            configure(configuration, Channel::CHANNEL1);
+            configure(configuration, Channel::CHANNEL2);
             return;
         }
 
@@ -128,7 +128,7 @@ namespace stm32::analog::dac {
         dacRegisters->MCR |= configuration.enableSignedMode << (offset + 9);
         dacRegisters->MCR |= (static_cast<uint8_t>(configuration.highFrequencyInterfaceMode) & 0x3) << 14;
 
-        if (channel == Channel::Channel1) {
+        if (channel == Channel::CHANNEL1) {
             dacRegisters->SHSR1 &= ~0xFF;
             dacRegisters->SHSR1 |= configuration.sampleTime;
         } else {

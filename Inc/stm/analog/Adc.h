@@ -32,12 +32,39 @@ namespace stm32::analog::adc {
         CYCLES_640_5
     };
 
+    enum class AdcDataResolution : uint8_t {
+        TWELVE_BIT = 0,
+        TEN_BIT = 1,
+        EIGTH_BIT = 2,
+        SIX_BIT = 3
+    };
+
+    enum class AdcTriggerEdge {
+        DISABLED = 0,
+        RISING_EDGE = 1,
+        FALLING_EDGE = 2,
+        BOTH = 3
+    };
+
     struct AdcStatus {
         bool ready, eosmp, eoconv, eoseq, overrun, jeoconv, jeoseq, watchdog1, watchdog2, watchdog3, jqovf;
     };
 
     struct AdcConfiguration {
-
+        bool dma = false, dmaCircularMode = false;
+        AdcDataResolution dataResolution = AdcDataResolution::TWELVE_BIT;
+        uint8_t rExternalTrigger = 0;
+        AdcTriggerEdge rTriggerEdge = AdcTriggerEdge::DISABLED;
+        bool overrunOverwrite = false, rContinuousConversion = false, delayedConversion = false, leftAligned = false,
+            rDiscontinuousConversion = true;
+        uint8_t discontinuousChannelCount = 0;
+        bool jDiscontinuousConversion = true, watchdog1OnAllChannels = false, rEnableWatchdog1 = false, jEnableWatchdog1 = false,
+            jAutomaticGroupConversion = false;
+        uint8_t watchDog1ChannelSelection = 0;
+        bool rEnableOversampling = false, jEnableOversampling = false;
+        uint8_t oversamplingRatio = 0, oversamplingShift = 0;
+        bool rTriggeredOversampling = false, rOversamplingResumedMode = false, enableGainCompensation = false,
+            enableBulbSampling = false, enableSamplingTimeCtrlTrigger = false;
     };
 
     struct AdcCalibration {

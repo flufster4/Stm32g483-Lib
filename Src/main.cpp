@@ -52,13 +52,13 @@ int main(void)
     gpioA.configureGpio(0, dacPinConfig);
     gpioA.configureGpio(4, dacPinConfig);
 
-    dac1.disable(analog::dac::Channel::Channel1);
-    dac1.configure(dac1configuration, analog::dac::Channel::Channel1);
+    dac1.disable(analog::dac::Channel::CHANNEL1);
+    dac1.configure(dac1configuration, analog::dac::Channel::CHANNEL1);
     dac1.setOutputValue(
-        analog::dac::Dac::voltageToValue(1652, analog::dac::DataResolution::TwelveBit),
-        analog::dac::Channel::Channel1
+        analog::dac::Dac::voltageToValue(1652, analog::dac::DataResolution::TWELVE_BIT),
+        analog::dac::Channel::CHANNEL1
         );
-    dac1.enable(analog::dac::Channel::Channel1);
+    dac1.enable(analog::dac::Channel::CHANNEL1);
 
     adc1.setDeepPowerDown(false);
     adc1.setVoltageRegulator(true);
@@ -80,7 +80,7 @@ int main(void)
 		uint16_t adcValue = adc1.getValue();
 		dac1.setOutputValue(
 			adcValue,
-			analog::dac::Channel::Channel1
+			analog::dac::Channel::CHANNEL1
 		);
 		adc1.startConversion();
 	}
