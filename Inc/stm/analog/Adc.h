@@ -46,12 +46,35 @@ namespace stm32::analog::adc {
         BOTH = 3
     };
 
+    enum class AdcOversamplingRatio : uint8_t {
+        TWO = 0,
+        FOUR = 1,
+        EIGHT = 2,
+        SIXTEEN = 3,
+        THIRTY_TWO = 4,
+        SIXTY_FOUR = 5,
+        HUNDRED_TWENTY_EIGHT = 6,
+        TWO_HUNDRED_FIFTY_SIX = 7
+    };
+
+    enum class AdcOversamplingShift : uint8_t {
+        NONE = 0,
+        ONE_BIT = 1,
+        TWO_BIT = 2,
+        THREE_BIT = 3,
+        FOUR_BIT = 4,
+        FIVE_BIT = 5,
+        SIX_BIT = 6,
+        SEVEN_BIT = 7,
+        EIGHT_BIT = 8
+    };
+
     struct AdcStatus {
         bool ready, eosmp, eoconv, eoseq, overrun, jeoconv, jeoseq, watchdog1, watchdog2, watchdog3, jqovf;
     };
 
     struct AdcConfiguration {
-        bool dma = false, dmaCircularMode = false;
+        bool enableDma = false, dmaCircularMode = false;
         AdcDataResolution dataResolution = AdcDataResolution::TWELVE_BIT;
         uint8_t rExternalTrigger = 0;
         AdcTriggerEdge rTriggerEdge = AdcTriggerEdge::DISABLED;
@@ -59,10 +82,11 @@ namespace stm32::analog::adc {
             rDiscontinuousConversion = true;
         uint8_t discontinuousChannelCount = 0;
         bool jDiscontinuousConversion = true, watchdog1OnAllChannels = false, rEnableWatchdog1 = false, jEnableWatchdog1 = false,
-            jAutomaticGroupConversion = false;
+            jAutomaticGroupConversion = false, enableInjectedQueue = false;
         uint8_t watchDog1ChannelSelection = 0;
         bool rEnableOversampling = false, jEnableOversampling = false;
-        uint8_t oversamplingRatio = 0, oversamplingShift = 0;
+        AdcOversamplingRatio oversamplingRatio = AdcOversamplingRatio::TWO;
+        AdcOversamplingShift oversamplingShift = AdcOversamplingShift::NONE;
         bool rTriggeredOversampling = false, rOversamplingResumedMode = false, enableGainCompensation = false,
             enableBulbSampling = false, enableSamplingTimeCtrlTrigger = false;
     };

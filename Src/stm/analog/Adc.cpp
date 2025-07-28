@@ -133,7 +133,36 @@ namespace stm32::analog::adc {
     }
 
     void Adc::configureAdc(const AdcConfiguration &config) const {
+        adcRegisters->CFGR &= ~0xFFFFFFFB;
+        adcRegisters->CFGR |= config.enableDma |
+            (config.dmaCircularMode << 1) |
+            (static_cast<uint8_t>(config.dataResolution) << 3) |
+            ((config.rExternalTrigger & 0x1F) << 5) |
+            (static_cast<uint8_t>(config.rTriggerEdge) << 10) |
+            (config.overrunOverwrite << 12) |
+            (config.rContinuousConversion << 13) |
+            (config.delayedConversion << 14) |
+            (config.leftAligned << 15) |
+            (config.rDiscontinuousConversion << 16) |
+            ((config.discontinuousChannelCount & 0x7) << 17) |
+            (config.jDiscontinuousConversion << 20) |
+            (config.watchdog1OnAllChannels << 22) |
+            (config.rEnableWatchdog1 << 23) |
+            (config.jEnableWatchdog1 << 24) |
+            (config.jAutomaticGroupConversion << 25) |
+            ((config.watchDog1ChannelSelection & 0x1F) << 26) |
+            (!config.enableInjectedQueue << 31);
 
+        adcRegisters->CFGR2 &= ~(0x3FF | (1 << 16) | (0x7 << 25));
+        adcRegisters->CFGR2 |= config.rOversamplingResumedMode |
+            (config.jEnableOversampling << 1) |
+            (static_cast<uint8_t>(config.oversamplingRatio) << 2) |
+            (static_cast<uint8_t>(config.oversamplingShift) << 5) |
+            (config.rTriggeredOversampling << 9) |
+            (config.rOversamplingResumedMode << 10) |
+            (config.enableGainCompensation << 16) |
+            (config.enableBulbSampling << 26) |
+            (config.enableSamplingTimeCtrlTrigger << 27);
     }
 
 
