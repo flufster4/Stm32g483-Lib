@@ -73,6 +73,10 @@ namespace stm32::analog::adc {
         bool ready, eosmp, eoconv, eoseq, overrun, jeoconv, jeoseq, watchdog1, watchdog2, watchdog3, jqovf;
     };
 
+    struct AdcCalibration {
+        uint8_t S, D;
+    };
+
     struct AdcConfiguration {
         bool enableDma = false, dmaCircularMode = false;
         AdcDataResolution dataResolution = AdcDataResolution::TWELVE_BIT;
@@ -91,8 +95,34 @@ namespace stm32::analog::adc {
             enableBulbSampling = false, enableSamplingTimeCtrlTrigger = false;
     };
 
-    struct AdcCalibration {
-        uint8_t S, D;
+    class AdcConfigurationBuilder {
+        AdcConfiguration configuration;
+
+    public:
+        AdcConfigurationBuilder() = default;
+        [[nodiscard]] static AdcConfigurationBuilder from(AdcConfiguration& configuration);
+
+        AdcConfigurationBuilder& enableDma(bool enable, bool circularMode);
+        AdcConfigurationBuilder& setDataResolution(AdcDataResolution resolution);
+        AdcConfigurationBuilder& setExternalTrigger(uint8_t trigger, AdcTriggerEdge edge);
+        AdcConfigurationBuilder& enableOverrunOverwriteMode(bool enable = true);
+        AdcConfigurationBuilder& enableContinuousConversionMode(bool enable = true);
+        AdcConfigurationBuilder& enableDelayedConversionMode(bool enable = true);
+        AdcConfigurationBuilder& enableLeftDataAlignment(bool enable = true);
+        AdcConfigurationBuilder& enableDiscontinuousConversionMode(bool regularChannels, bool injectedChannels, uint8_t channelCount);
+        AdcConfigurationBuilder& enableWatchdog(bool allChannels, bool regularChannels, bool injectedChannels, uint8_t channelSelection);
+        AdcConfigurationBuilder& enableInjectedQueue(bool enable = true);
+        AdcConfigurationBuilder& enableAutomaticInjectedGroupConversion(bool enable = true);
+        AdcConfigurationBuilder& enableOversampling(bool regular, bool injected);
+        AdcConfigurationBuilder& setOversamplingRation(AdcOversamplingRatio ratio);
+        AdcConfigurationBuilder& setOversamplingShift(AdcOversamplingShift shift);
+        AdcConfigurationBuilder& enableTriggeredOversampling(bool enable = true);
+        AdcConfigurationBuilder& enableOversamplingResumedMode(bool enable = true);
+        AdcConfigurationBuilder& enableGainCompensation(bool enable = true);
+        AdcConfigurationBuilder& enableBulbSamplingMode(bool enable = true);
+        AdcConfigurationBuilder& enableSamplingTimeCtrlTrigger(bool enable = true);
+
+        [[nodiscard]] AdcConfiguration build() const;
     };
 
     struct AdcConversionSequence {

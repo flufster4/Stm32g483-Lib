@@ -15,6 +15,7 @@ set(SOURCES
         Src/stm/analog/Adc.cpp
         Inc/stm/analog/Adc.h
         Src/stm/analog/AdcConversionSequenceBuilder.cpp
+        Src/stm/analog/AdcConfigurationBuilder.cpp
 )
 
 add_executable(cplusplus ${SOURCES})
