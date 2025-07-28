@@ -64,7 +64,7 @@ int main(void)
     adc1.setVoltageRegulator(true);
     for (volatile uint32_t i = 100000; i > 0; i--) {}
 
-	adc1.calibrateAdc();
+	(void) adc1.calibrateAdc();
 
     adc1.setSamplingTime(analog::adc::AdcSamplingTime::CYCLES_24_5, 1);
 

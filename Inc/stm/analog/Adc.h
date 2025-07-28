@@ -87,8 +87,8 @@ namespace stm32::analog::adc {
         void setConversionSequence(const AdcConversionSequence& sequence) const;
         void setSamplingTime(AdcSamplingTime samplingTime, uint8_t channel, bool additionalCycle = false) const;
 
-        AdcCalibration calibrateAdc() const;
-        void calibrateAdc(AdcCalibration& calibration) const;
+        AdcCalibration calibrateAdc(bool differential = false) const;
+        void calibrateAdc(const AdcCalibration& calibration) const;
 
         [[nodiscard]] uint16_t getValue() const;
 

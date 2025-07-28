@@ -10,6 +10,9 @@
 namespace stm32::analog::adc {
 
     void Adc::disable() const {
+        if (!(adcRegisters->CR & 1))
+            return;
+
         adcRegisters->CR |= 1 << 1;
         while (adcRegisters->CR & 1 << 1);
     }
@@ -23,6 +26,9 @@ namespace stm32::analog::adc {
     }
 
     void Adc::stopConversion() const {
+        if (!(adcRegisters->CR & (1 << 2)))
+            return;
+
         adcRegisters->CR |= 1 << 4;
         while (adcRegisters->CR & 1 << 4);
     }
@@ -32,6 +38,9 @@ namespace stm32::analog::adc {
     }
 
     void Adc::stopInjectedConversion() const {
+        if (!(adcRegisters->CR & (1 << 3)))
+            return;
+
         adcRegisters->CR |= 1 << 5;
         while (adcRegisters->CR & 1 << 5);
     }
@@ -102,7 +111,12 @@ namespace stm32::analog::adc {
         return static_cast<uint16_t>(adcRegisters->DR);
     }
 
-    AdcCalibration Adc::calibrateAdc() const {
+    AdcCalibration Adc::calibrateAdc(const bool differential) const {
+        if (differential)
+            adcRegisters->CR |= (1 << 30);
+        else
+            adcRegisters->CR &= ~(1 << 30);
+
         adcRegisters->CR |= 1 << 31;
         while (adcRegisters->CR & (1 << 31)) {}
 
@@ -110,6 +124,12 @@ namespace stm32::analog::adc {
             static_cast<uint8_t>(adcRegisters->CALDFACT & 0x7F),
             static_cast<uint8_t>((adcRegisters->CALDFACT & (0x7F << 16)) >> 16)
         };
+    }
+
+    void Adc::calibrateAdc(const AdcCalibration& calibration) const {
+        adcRegisters->CALDFACT &= ~(0x7F | (0x7F << 16));
+        adcRegisters->CALDFACT |= (calibration.S & 0x7F);
+        adcRegisters->CALDFACT |= ((calibration.D & 0x7F) << 16);
     }
 
 
