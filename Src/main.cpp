@@ -16,7 +16,7 @@
  ******************************************************************************
  */
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "../Inc/stm/digital/Gpio.h"
 #include "../Inc/stm/sys/Rcc.h"
@@ -30,7 +30,7 @@
 
 volatile uint16_t adc_buffer[16];
 
-int main(void)
+int main()
 {
     using namespace stm32;
 
@@ -73,7 +73,7 @@ int main(void)
     for (volatile uint32_t i = 100000; i > 0; i--) {}
 	(void) adc1.calibrateAdc();
 
-    adc1.setSamplingTime(analog::adc::AdcSamplingTime::CYCLES_24_5, 1);
+    adc1.setSamplingTime(analog::adc::AdcSamplingTime::CYCLES_92_5, 1);
     analog::adc::AdcConversionSequence conversionSequence = analog::adc::AdcConversionSequenceBuilder(1).build();
     adc1.setConversionSequence(conversionSequence);
 
@@ -81,6 +81,8 @@ int main(void)
 		.enableDma(true, true)
 		.enableContinuousConversionMode()
 		.setDataResolution(analog::adc::AdcDataResolution::TWELVE_BIT)
+		.enableDiscontinuousConversionMode(false, false, 0)
+		//.enableOverrunOverwriteMode()
 		.build();
 	adc1.configureAdc(adcConfig);
 
@@ -92,18 +94,20 @@ int main(void)
 		.enableIncrementMode(false, true)
 		.setNumberOfData(16)
 		.setDataSize(system::dma::DmaDataSize::SIXTEEN_BIT, system::dma::DmaDataSize::SIXTEEN_BIT)
-		.setDataAddress(adc1.getDrAddress(), reinterpret_cast<uint32_t>(const_cast<uint16_t*>(adc_buffer)))
+		.setDataAddress(adc1.getDrAddress(), (uint32_t*)adc_buffer)
 		.build();
 	dma1.configureChannel(dmaConfig, 1);
 
 	system::dma::DmaMuxChannelConfiguration dmamuxConfig = system::dma::DmaMuxChannelConfigurationBuilder()
 		.setDmaRequest(system::dma::DmaMuxDmaInput::ADC1)
+		.setNumberOfRequests(1)
 		.build();
 	dmamux.configureChannel(dmamuxConfig, 0);
 
-	dma1.enableChannel(1);
 	adc1.enable();
 	adc1.startConversion();
+	dma1.enableChannel(1);
+
     /* Loop forever */
 	for(;;) {
 		dac1.setOutputValue(

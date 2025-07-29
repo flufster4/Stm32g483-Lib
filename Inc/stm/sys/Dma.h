@@ -138,10 +138,10 @@ namespace stm32::system::dma {
     };
 
     enum class DmaChannelPriority : uint8_t {
-        LOW = 1,
-        MEDIUM = 2,
-        HIGH = 3,
-        VERY_HIGH = 4
+        LOW = 0,
+        MEDIUM = 1,
+        HIGH = 2,
+        VERY_HIGH = 3
     };
 
     enum class DmaDataSize : uint8_t {
@@ -207,7 +207,8 @@ namespace stm32::system::dma {
         DmaChannelPriority priority = DmaChannelPriority::LOW;
         bool memoryToMemoryMode = false;
         uint16_t numberOfData = 1;
-        uint32_t peripheralAddress = 0, memoryAddress = 0;
+        uint32_t* peripheralAddress = nullptr;
+        uint32_t* memoryAddress = nullptr;
     };
 
     class DmaMuxChannelConfigurationBuilder {
@@ -250,7 +251,7 @@ namespace stm32::system::dma {
         DmaChannelConfigurationBuilder() = default;
         explicit DmaChannelConfigurationBuilder(const DmaChannelConfiguration& configuration) : configuration(configuration) {}
 
-        DmaChannelConfigurationBuilder& enableInterupts(bool transferComplete, bool halfTransfer, bool transferError);
+        DmaChannelConfigurationBuilder& enableInterrupts(bool transferComplete, bool halfTransfer, bool transferError);
         DmaChannelConfigurationBuilder& setDataDirection(bool fromMemory);
         DmaChannelConfigurationBuilder& enableCircularMode(bool enable = true);
         DmaChannelConfigurationBuilder& enableIncrementMode(bool peripheralIncrement, bool memoryIncrement);
@@ -258,7 +259,7 @@ namespace stm32::system::dma {
         DmaChannelConfigurationBuilder& setPriority(DmaChannelPriority priority);
         DmaChannelConfigurationBuilder& enableMemoryToMemoryMode(bool enable = true);
         DmaChannelConfigurationBuilder& setNumberOfData(uint16_t amount);
-        DmaChannelConfigurationBuilder& setDataAddress(uint32_t peripheralAddress, uint32_t memoryAddress);
+        DmaChannelConfigurationBuilder& setDataAddress(uint32_t* peripheralAddress, uint32_t* memoryAddress);
 
         [[nodiscard]] DmaChannelConfiguration build() const;
     };

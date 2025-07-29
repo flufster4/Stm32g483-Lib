@@ -6,7 +6,7 @@
 
 namespace stm32::system::dma {
 
-    DmaChannelConfigurationBuilder &DmaChannelConfigurationBuilder::enableInterupts(const bool transferComplete, const bool halfTransfer, const bool transferError) {
+    DmaChannelConfigurationBuilder &DmaChannelConfigurationBuilder::enableInterrupts(const bool transferComplete, const bool halfTransfer, const bool transferError) {
         configuration.transferCompleteInterrupt = transferComplete;
         configuration.halfTransferInterrupt = halfTransfer;
         configuration.transferErrorInterrupt = transferError;
@@ -50,7 +50,7 @@ namespace stm32::system::dma {
         return *this;
     }
 
-    DmaChannelConfigurationBuilder &DmaChannelConfigurationBuilder::setDataAddress(const uint32_t peripheralAddress, const uint32_t memoryAddress) {
+    DmaChannelConfigurationBuilder &DmaChannelConfigurationBuilder::setDataAddress(uint32_t* peripheralAddress, uint32_t* memoryAddress) {
         configuration.peripheralAddress = peripheralAddress;
         configuration.memoryAddress = memoryAddress;
         return *this;
