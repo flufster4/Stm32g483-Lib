@@ -19,6 +19,9 @@ set(SOURCES
         Inc/stm/sys/Dma.h
         Src/stm/sys/Dma.cpp
         Src/stm/sys/DmaChannelConfigurationBuilder.cpp
+        Src/stm/sys/DmaMuxGeneratorChannelConfigurationBuilder.cpp
+        Src/stm/sys/DmaMuxChannelConfigurationBuilder.cpp
+        Src/stm/sys/DmaMux.cpp
 )
 
 add_executable(cplusplus ${SOURCES})

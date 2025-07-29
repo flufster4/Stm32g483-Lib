@@ -18,7 +18,7 @@ namespace stm32::system::dma {
          C15CR, r0[16], CSR, CCFR, r1[30], RG0CR, RG1CR, RG2CR, RG3CR, r2[12], RGSR, RGCFR, r3[173];
     };
 
-    enum class DmaMuxInput : uint8_t {
+    enum class DmaMuxDmaInput : uint8_t {
         NONE,
         G0,
         G1,
@@ -150,8 +150,54 @@ namespace stm32::system::dma {
         THIRTY_TWO_BIT = 2
     };
 
+    enum class DmaMuxSynchronizationPolarity : uint8_t {
+        NO_EVENT = 0,
+        RISING_EDGE = 1,
+        FALLING_EDGE = 2,
+        BOTH = 3
+    };
+
+    enum class DmaMuxSynchronizationInput : uint8_t {
+        EXTI_LINE0 = 0,
+        EXTI_LINE1 = 1,
+        EXTI_LINE2 = 2,
+        EXTI_LINE3 = 3,
+        EXTI_LINE4 = 4,
+        EXTI_LINE5 = 5,
+        EXTI_LINE6 = 6,
+        EXTI_LINE7 = 7,
+        EXTI_LINE8 = 8,
+        EXTI_LINE9 = 9,
+        EXTI_LINE10 = 10,
+        EXTI_LINE11 = 11,
+        EXTI_LINE12 = 12,
+        EXTI_LINE13 = 13,
+        EXTI_LINE14 = 14,
+        EXTI_LINE15 = 15,
+        DMAMUX1_CH0_EVENT = 16,
+        DMAMUX1_CH1_EVENT = 17,
+        DMAMUX1_CH2_EVENT = 18,
+        DMAMUX1_CH3_EVENT = 19,
+        LPTIM1_OUT = 20
+    };
+
     struct DmaChannelStatus {
         bool global, transferComplete, halfTransfer, transferError;
+    };
+
+    struct DmaMuxChannelConfiguration {
+        DmaMuxDmaInput dmaRequest = DmaMuxDmaInput::NONE;
+        bool synchronizationOverrunInterrupt = false, enableEventGeneration = false, enableSynchronization = false;
+        DmaMuxSynchronizationPolarity synchronizationPolarity = DmaMuxSynchronizationPolarity::NO_EVENT;
+        uint8_t numberOfRequestsToForward = 0;
+        DmaMuxSynchronizationInput synchronizationInput = DmaMuxSynchronizationInput::EXTI_LINE0;
+    };
+
+    struct DmaMuxGeneratorChannelConfiguration {
+        DmaMuxDmaInput signal = DmaMuxDmaInput::NONE;
+        bool enableTriggerOverrunInterrupt = false;
+        DmaMuxSynchronizationPolarity triggerPolarity = DmaMuxSynchronizationPolarity::NO_EVENT;
+        uint8_t numberOfRequests = 0;
     };
 
     struct DmaChannelConfiguration {
@@ -162,6 +208,39 @@ namespace stm32::system::dma {
         bool memoryToMemoryMode = false;
         uint16_t numberOfData = 1;
         uint32_t peripheralAddress = 0, memoryAddress = 0;
+    };
+
+    class DmaMuxChannelConfigurationBuilder {
+        DmaMuxChannelConfiguration configuration;
+
+    public:
+        DmaMuxChannelConfigurationBuilder() = default;
+        explicit DmaMuxChannelConfigurationBuilder(const DmaMuxChannelConfiguration& configuration) : configuration(configuration) {}
+
+        DmaMuxChannelConfigurationBuilder& setDmaRequest(DmaMuxDmaInput request);
+        DmaMuxChannelConfigurationBuilder& enableSynchronizationOverrunInterrupt(bool enable = true);
+        DmaMuxChannelConfigurationBuilder& enableEventGeneration(bool enable = true);
+        DmaMuxChannelConfigurationBuilder& enableSynchronization(bool enable = true);
+        DmaMuxChannelConfigurationBuilder& setSynchronizationPolarity(DmaMuxSynchronizationPolarity polarity);
+        DmaMuxChannelConfigurationBuilder& setNumberOfRequests(uint8_t number);
+        DmaMuxChannelConfigurationBuilder& setSynchronizationInput(DmaMuxSynchronizationInput input);
+
+        [[nodiscard]] DmaMuxChannelConfiguration build() const;
+    };
+
+    class DmaMuxGeneratorChannelConfigurationBuilder {
+        DmaMuxGeneratorChannelConfiguration configuration;
+
+    public:
+        DmaMuxGeneratorChannelConfigurationBuilder() = default;
+        explicit DmaMuxGeneratorChannelConfigurationBuilder(const DmaMuxGeneratorChannelConfiguration& configuration) : configuration(configuration) {}
+
+        DmaMuxGeneratorChannelConfigurationBuilder& setSignal(DmaMuxDmaInput signal);
+        DmaMuxGeneratorChannelConfigurationBuilder& enableTriggerOverrunInterrupt(bool enable = true);
+        DmaMuxGeneratorChannelConfigurationBuilder& setTriggerPolarity(DmaMuxSynchronizationPolarity polarity);
+        DmaMuxGeneratorChannelConfigurationBuilder& setNumberOfRequests(uint8_t number);
+
+        [[nodiscard]] DmaMuxGeneratorChannelConfiguration build() const;
     };
 
     class DmaChannelConfigurationBuilder {
@@ -182,6 +261,24 @@ namespace stm32::system::dma {
         DmaChannelConfigurationBuilder& setDataAddress(uint32_t peripheralAddress, uint32_t memoryAddress);
 
         [[nodiscard]] DmaChannelConfiguration build() const;
+    };
+
+    class DmaMux {
+        DmaMuxRegisters* dmaMuxRegisters;
+
+    public:
+        explicit DmaMux(const uint32_t baseAddress) : dmaMuxRegisters(reinterpret_cast<DmaMuxRegisters*>(baseAddress)) {}
+
+        void configureChannel(const DmaMuxChannelConfiguration& configuration, uint8_t channel) const;
+        void configureGeneratorChannel(const DmaMuxGeneratorChannelConfiguration& configuration, uint8_t channel) const;
+
+        [[nodiscard]] bool isChannelSynchronizationOverrun(uint8_t channel) const;
+        [[nodiscard]] bool isGeneratorChannelTriggerOverrun(uint8_t channel) const;
+        void clearChannelSynchronizationOverrun(uint8_t channel) const;
+        void clearGeneratorChannelTriggerOverrun(uint8_t channel) const;
+
+        void enableGeneratorChannel(uint8_t channel) const;
+        void disableGeneratorChannel(uint8_t channel) const;
     };
 
     class Dma {

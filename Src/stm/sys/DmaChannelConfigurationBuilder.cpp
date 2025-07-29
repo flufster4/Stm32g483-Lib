@@ -46,7 +46,7 @@ namespace stm32::system::dma {
     }
 
     DmaChannelConfigurationBuilder &DmaChannelConfigurationBuilder::setNumberOfData(const uint16_t amount) {
-        configuration.numberOfData = amount;
+        configuration.numberOfData = (amount > 0) ? (amount - 1) : 0;
         return *this;
     }
 
