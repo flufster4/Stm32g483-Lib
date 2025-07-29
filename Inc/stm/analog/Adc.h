@@ -114,7 +114,7 @@ namespace stm32::analog::adc {
         AdcConfigurationBuilder& enableInjectedQueue(bool enable = true);
         AdcConfigurationBuilder& enableAutomaticInjectedGroupConversion(bool enable = true);
         AdcConfigurationBuilder& enableOversampling(bool regular, bool injected);
-        AdcConfigurationBuilder& setOversamplingRation(AdcOversamplingRatio ratio);
+        AdcConfigurationBuilder& setOversamplingRatio(AdcOversamplingRatio ratio);
         AdcConfigurationBuilder& setOversamplingShift(AdcOversamplingShift shift);
         AdcConfigurationBuilder& enableTriggeredOversampling(bool enable = true);
         AdcConfigurationBuilder& enableOversamplingResumedMode(bool enable = true);

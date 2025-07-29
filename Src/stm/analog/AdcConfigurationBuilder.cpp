@@ -74,7 +74,7 @@ namespace stm32::analog::adc {
         return *this;
     }
 
-    AdcConfigurationBuilder &AdcConfigurationBuilder::setOversamplingRation(const AdcOversamplingRatio ratio) {
+    AdcConfigurationBuilder &AdcConfigurationBuilder::setOversamplingRatio(const AdcOversamplingRatio ratio) {
         configuration.oversamplingRatio = ratio;
         return *this;
     }

@@ -82,7 +82,6 @@ int main()
 		.enableContinuousConversionMode()
 		.setDataResolution(analog::adc::AdcDataResolution::TWELVE_BIT)
 		.enableDiscontinuousConversionMode(false, false, 0)
-		//.enableOverrunOverwriteMode()
 		.build();
 	adc1.configureAdc(adcConfig);
 
