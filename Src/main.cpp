@@ -23,6 +23,7 @@
 #include "../Inc/stm/analog/Dac.h"
 #include "../Inc/stm/analog/Adc.h"
 #include "../Inc/stm/sys/Dma.h"
+#include "../Inc/stm/sys/Tim.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
@@ -48,6 +49,8 @@ int main()
 	system::dma::Dma dma1(0x4002'0000);
 	system::dma::DmaMux dmamux(0x4002'0800);
 
+	system::tim::BasicTimer tim6(0x4000'1000)
+
     rcc->AHB2ENR |= 0x1; //gpio a
     rcc->AHB2ENR |= 0x1 << 16; //dac 1
 	rcc->CCIPR &= ~(0b11 << 28);
@@ -55,18 +58,15 @@ int main()
     rcc->AHB2ENR |= 0x1 << 13; //adc 1
 	rcc->AHB1ENR |= 0x1; //dma 1
 	rcc->AHB1ENR |= 0x1 << 2; //dmamux
+	rcc->APB1ENR1 |= 0x1 << 4; //tim 6
     asm("nop; nop; nop");
 
     gpioA.configureGpio(0, dacPinConfig);
     gpioA.configureGpio(4, dacPinConfig);
 
-    dac1.disable(analog::dac::Channel::CHANNEL1);
-    dac1.configure(dac1configuration, analog::dac::Channel::CHANNEL1);
-    dac1.setOutputValue(
-        analog::dac::Dac::voltageToValue(1652, analog::dac::DataResolution::TWELVE_BIT),
-        analog::dac::Channel::CHANNEL1
-        );
-    dac1.enable(analog::dac::Channel::CHANNEL1);
+    dac1.disable(analog::dac::Channel::DUAL);
+    dac1.configure(dac1configuration, analog::dac::Channel::DUAL);
+    dac1.enable(analog::dac::Channel::DUAL);
 
     adc1.setDeepPowerDown(false);
     adc1.setVoltageRegulator(true);
@@ -107,11 +107,24 @@ int main()
 	adc1.startConversion();
 	dma1.enableChannel(1);
 
+	tim6.stopCounter();
+
+	tim6.setClockPrescaler(1);
+	tim6.setAutoReloadValue(16);
+	system::tim::BasicTimerConfiguration tim6_config = system::tim::BasicTimerConfigurationBuilder().build();
+	tim6.configure(tim6_config);
+
+	tim6.startCounter();
+
     /* Loop forever */
 	for(;;) {
 		dac1.setOutputValue(
 			adc_buffer[0],
 			analog::dac::Channel::CHANNEL1
+		);
+		dac1.setOutputValue(
+			analog::dac::Dac::voltageToValue(tim6.getCount() * 100, analog::dac::DataResolution::TWELVE_BIT),
+			analog::dac::Channel::CHANNEL2
 		);
 	}
 
