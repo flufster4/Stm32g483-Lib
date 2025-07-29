@@ -64,7 +64,7 @@ namespace stm32::analog::dac {
 
     public:
         DacChannelConfigurationBuilder() = default;
-        [[nodiscard]] static DacChannelConfigurationBuilder from(DacChannelConfiguration& configuration);
+        explicit DacChannelConfigurationBuilder(const DacChannelConfiguration& configuration) : configuration(configuration) {}
 
         DacChannelConfigurationBuilder& enableTrigger(bool enable = true);
         DacChannelConfigurationBuilder& setTriggerSelection(uint8_t triggerSelection);

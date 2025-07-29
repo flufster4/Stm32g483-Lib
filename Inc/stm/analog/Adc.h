@@ -100,7 +100,7 @@ namespace stm32::analog::adc {
 
     public:
         AdcConfigurationBuilder() = default;
-        [[nodiscard]] static AdcConfigurationBuilder from(AdcConfiguration& configuration);
+        explicit AdcConfigurationBuilder(const AdcConfiguration& configuration) : configuration(configuration) {}
 
         AdcConfigurationBuilder& enableDma(bool enable, bool circularMode);
         AdcConfigurationBuilder& setDataResolution(AdcDataResolution resolution);

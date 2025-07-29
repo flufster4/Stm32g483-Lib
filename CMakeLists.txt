@@ -16,6 +16,9 @@ set(SOURCES
         Inc/stm/analog/Adc.h
         Src/stm/analog/AdcConversionSequenceBuilder.cpp
         Src/stm/analog/AdcConfigurationBuilder.cpp
+        Inc/stm/sys/Dma.h
+        Src/stm/sys/Dma.cpp
+        Src/stm/sys/DmaChannelConfigurationBuilder.cpp
 )
 
 add_executable(cplusplus ${SOURCES})
