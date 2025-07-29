@@ -22,10 +22,13 @@
 #include "../Inc/stm/sys/Rcc.h"
 #include "../Inc/stm/analog/Dac.h"
 #include "../Inc/stm/analog/Adc.h"
+#include "../Inc/stm/sys/Dma.h"
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
+
+volatile uint16_t adc_buffer[16];
 
 int main(void)
 {
@@ -42,11 +45,16 @@ int main(void)
 
     analog::adc::Adc adc1(0x5000'0000);
 
-    rcc->AHB2ENR |= 0x1;
-    rcc->AHB2ENR |= 0x1 << 16;
+	system::dma::Dma dma1(0x4002'0000);
+	system::dma::DmaMux dmamux(0x4002'0800);
+
+    rcc->AHB2ENR |= 0x1; //gpio a
+    rcc->AHB2ENR |= 0x1 << 16; //dac 1
 	rcc->CCIPR &= ~(0b11 << 28);
-	rcc->CCIPR |= 0b10 << 28;
-    rcc->AHB2ENR |= 0x1 << 13;
+	rcc->CCIPR |= 0b10 << 28; //adc 1 clock selection
+    rcc->AHB2ENR |= 0x1 << 13; //adc 1
+	rcc->AHB1ENR |= 0x1; //dma 1
+	rcc->AHB1ENR |= 0x1 << 2; //dmamux
     asm("nop; nop; nop");
 
     gpioA.configureGpio(0, dacPinConfig);
@@ -63,26 +71,45 @@ int main(void)
     adc1.setDeepPowerDown(false);
     adc1.setVoltageRegulator(true);
     for (volatile uint32_t i = 100000; i > 0; i--) {}
-
 	(void) adc1.calibrateAdc();
 
     adc1.setSamplingTime(analog::adc::AdcSamplingTime::CYCLES_24_5, 1);
-
     analog::adc::AdcConversionSequence conversionSequence = analog::adc::AdcConversionSequenceBuilder(1).build();
     adc1.setConversionSequence(conversionSequence);
 
-    adc1.enable();
-    adc1.startConversion();
+	analog::adc::AdcConfiguration adcConfig = analog::adc::AdcConfigurationBuilder()
+		.enableDma(true, true)
+		.enableContinuousConversionMode()
+		.setDataResolution(analog::adc::AdcDataResolution::TWELVE_BIT)
+		.build();
+	adc1.configureAdc(adcConfig);
 
+	dma1.disableChannel(1);
+
+	system::dma::DmaChannelConfiguration dmaConfig = system::dma::DmaChannelConfigurationBuilder()
+		.setPriority(system::dma::DmaChannelPriority::VERY_HIGH)
+		.enableCircularMode()
+		.enableIncrementMode(false, true)
+		.setNumberOfData(16)
+		.setDataSize(system::dma::DmaDataSize::SIXTEEN_BIT, system::dma::DmaDataSize::SIXTEEN_BIT)
+		.setDataAddress(adc1.getDrAddress(), reinterpret_cast<uint32_t>(const_cast<uint16_t*>(adc_buffer)))
+		.build();
+	dma1.configureChannel(dmaConfig, 1);
+
+	system::dma::DmaMuxChannelConfiguration dmamuxConfig = system::dma::DmaMuxChannelConfigurationBuilder()
+		.setDmaRequest(system::dma::DmaMuxDmaInput::ADC1)
+		.build();
+	dmamux.configureChannel(dmamuxConfig, 0);
+
+	dma1.enableChannel(1);
+	adc1.enable();
+	adc1.startConversion();
     /* Loop forever */
 	for(;;) {
-		while (!adc1.getStatus().eoconv) {}
-		uint16_t adcValue = adc1.getValue();
 		dac1.setOutputValue(
-			adcValue,
+			adc_buffer[0],
 			analog::dac::Channel::CHANNEL1
 		);
-		adc1.startConversion();
 	}
 
 }

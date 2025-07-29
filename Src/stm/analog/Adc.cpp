@@ -111,6 +111,10 @@ namespace stm32::analog::adc {
         return static_cast<uint16_t>(adcRegisters->DR);
     }
 
+    uint32_t Adc::getDrAddress() const {
+        return static_cast<uint32_t>(reinterpret_cast<uintptr_t>(&adcRegisters->DR));
+    }
+
     AdcCalibration Adc::calibrateAdc(const bool differential) const {
         if (differential)
             adcRegisters->CR |= (1 << 30);

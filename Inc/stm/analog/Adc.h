@@ -172,6 +172,7 @@ namespace stm32::analog::adc {
         void calibrateAdc(const AdcCalibration& calibration) const;
 
         [[nodiscard]] uint16_t getValue() const;
+        [[nodiscard]] uint32_t getDrAddress() const;
         [[nodiscard]] AdcStatus getStatus() const;
     };
 }
