@@ -22,6 +22,9 @@ set(SOURCES
         Src/stm/sys/DmaMuxGeneratorChannelConfigurationBuilder.cpp
         Src/stm/sys/DmaMuxChannelConfigurationBuilder.cpp
         Src/stm/sys/DmaMux.cpp
+        Inc/stm/sys/Tim.h
+        Src/stm/sys/tim/BasicTimerConfigurationBuilder.cpp
+        Src/stm/sys/tim/BasicTimer.cpp
 )
 
 add_executable(cplusplus ${SOURCES})
