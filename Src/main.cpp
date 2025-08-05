@@ -122,10 +122,6 @@ int main()
 			adc_buffer[0],
 			analog::dac::Channel::CHANNEL1
 		);
-		dac1.setOutputValue(
-			analog::dac::Dac::voltageToValue(tim6.getCount() * 100, analog::dac::DataResolution::TWELVE_BIT),
-			analog::dac::Channel::CHANNEL2
-		);
 	}
 
 }
