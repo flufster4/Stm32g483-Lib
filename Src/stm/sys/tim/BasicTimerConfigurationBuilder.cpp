@@ -2,7 +2,7 @@
 // Created by Markian on 7/29/2025.
 //
 
-#include "../../../../Inc/stm/sys/Tim.h"
+#include "../../../../Inc/stm/sys/BasicTim.h"
 
 namespace stm32::system::tim {
 

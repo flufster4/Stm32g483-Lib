@@ -2,7 +2,7 @@
 // Created by Markian on 8/1/2025.
 //
 
-#include "../../../../Inc/stm/sys/Tim.h"
+#include "../../../../Inc/stm/sys/GeneralPurposeTim.h"
 
 #define EXTRACT_BITS(var, pos, mask) ((var & (mask << pos)) >> pos)
 
