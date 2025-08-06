@@ -173,4 +173,23 @@ namespace stm32::system::tim {
         return isThirtyTwoBit ? (timerRegisters->CNT & ~(1 << 31)) : (timerRegisters->CNT & 0xFFFF);
     }
 
+    GeneralPurposeTimerStatus GeneralPurposeTimer::getStatus() const {
+        return GeneralPurposeTimerStatus{
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 0, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 1, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 2, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 3, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 4, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 6, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 9, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 10, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 11, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 12, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 20, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 21, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 22, 1)),
+            static_cast<bool>(EXTRACT_BITS(timerRegisters->SR, 23, 1)),
+        };
+    }
+
 }

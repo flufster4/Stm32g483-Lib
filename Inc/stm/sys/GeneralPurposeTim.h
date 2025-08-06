@@ -123,6 +123,12 @@ namespace stm32::system::tim {
         bool clearEnable = false;
     };
 
+    struct GeneralPurposeTimerStatus {
+        bool updateInterrupt, CC1interrupt, CC2interrupt, CC3interrupt, CC4interrupt, triggerInterrupt, CC1overcaptureInterrupt,
+            CC2overcaptureInterrupt, CC3overcaptureInterrupt, CC4overcaptureInterrupt, indexInterrupt, directionChangeInterrupt,
+            indexErrorInterrupt, transitionErrorInterrupt;
+    };
+
     class GeneralPurposeTimerConfigurationBuilder {
         GeneralPurposeTimerConfiguration configuration;
 
@@ -178,6 +184,8 @@ namespace stm32::system::tim {
         void update() const;
         void startCounter() const;
         void stopCounter() const;
+
+        [[nodiscard]] GeneralPurposeTimerStatus getStatus() const;
     };
 
 }
