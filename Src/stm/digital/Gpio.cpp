@@ -27,8 +27,10 @@ namespace stm32::digital::gpio {
 
     void Gpio::setGpioAlternativeFunction(const uint8_t pin, const PinAlternativeFunction function) const {
         volatile uint32_t* afr = (pin > 7) ? &gpioRegisters->AFRH : &gpioRegisters->AFRL;
-        *afr &= (0xF << (pin * 4));
-        *afr |= static_cast<uint8_t>(function) << (pin * 4);
+        const uint8_t shift = (pin % 8) * 4;
+
+        *afr &= ~(0xF << shift);
+        *afr |= (static_cast<uint8_t>(function) << shift);
     }
 
 

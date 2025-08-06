@@ -55,9 +55,9 @@ namespace stm32::system::tim {
         volatile uint32_t* ccmr = &timerRegisters->CCMR1;
         uint8_t offset = 0;
 
-        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 || channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
             ccmr = &timerRegisters->CCMR2;
-        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 || channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
             offset = 8;
 
         *ccmr &= ~(0xFF << offset);
@@ -70,9 +70,9 @@ namespace stm32::system::tim {
         volatile uint32_t* ccmr = &timerRegisters->CCMR1;
         uint8_t offset = 0;
 
-        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 || channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
             ccmr = &timerRegisters->CCMR2;
-        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 || channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
             offset = 8;
 
         *ccmr &= ~(0xFF << offset | (1 << (offset + 16)));
@@ -88,9 +88,9 @@ namespace stm32::system::tim {
         const volatile uint32_t* ccmr = &timerRegisters->CCMR1;
         uint8_t offset = 0;
 
-        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 || channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
             ccmr = &timerRegisters->CCMR2;
-        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 || channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
             offset = 8;
 
         return GeneralPurposeTimerInputCaptureConfiguration{
@@ -104,9 +104,9 @@ namespace stm32::system::tim {
         const volatile uint32_t* ccmr = &timerRegisters->CCMR1;
         uint8_t offset = 0;
 
-        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 || channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
             ccmr = &timerRegisters->CCMR2;
-        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 || channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
             offset = 8;
 
         return GeneralPurposeTimerOutputCompareConfiguration{
@@ -129,13 +129,13 @@ namespace stm32::system::tim {
     }
 
     void GeneralPurposeTimer::setOutputCompareValue(const GeneralPurposeTimerCaptureCompareChannel channel, const uint32_t value) const {
-        volatile uint32_t* ccr = &timerRegisters->CCER + 0x4 * static_cast<uint8_t>(channel);
-        *ccr &= isThirtyTwoBit ? 0xFFFFFFFF : 0xFFFFF;
+        volatile uint32_t* ccr = &timerRegisters->CCR1 + static_cast<uint8_t>(channel);
+        *ccr &= isThirtyTwoBit ? ~0xFFFFFFFF : ~0xFFFFF;
         *ccr |= isThirtyTwoBit ? value : (value & 0xFFFFF);
     }
 
     uint32_t GeneralPurposeTimer::getInputCaptureValue(GeneralPurposeTimerCaptureCompareChannel channel) const {
-        const volatile uint32_t* ccr = &timerRegisters->CCER + 0x4 * static_cast<uint8_t>(channel);
+        const volatile uint32_t* ccr = &timerRegisters->CCER + static_cast<uint8_t>(channel);
         return isThirtyTwoBit ? *ccr : (*ccr & 0xFFFFF);
     }
 
@@ -145,7 +145,7 @@ namespace stm32::system::tim {
     }
 
     void GeneralPurposeTimer::setAutoReloadValue(const uint32_t value) const {
-        timerRegisters->ARR &= isThirtyTwoBit ? 0xFFFFFFFF : 0xFFFFF;
+        timerRegisters->ARR &= isThirtyTwoBit ? ~0xFFFFFFFF : ~0xFFFFF;
         timerRegisters->ARR |= isThirtyTwoBit ? value : (value & 0xFFFFF);
     }
 
