@@ -60,6 +60,63 @@ namespace stm32::system::tim {
         ENCODER_CLOCK = 8 //encode clock is used as trgo
     };
 
+    enum class GeneralPurposeTimerCaptureCompareSelection : uint8_t {
+        OUTPUT = 0,
+        INPUT_1 = 1, //tim_ic1 is mapped on tim_ti1
+        INPUT_2 = 2, //tim_ic1 is mapped on tim_ti2
+        INPUT_3 = 3 //tim_ic1 is mapped on tim_trc
+    };
+
+    enum class GeneralPurposeTimerInputCapturePrescaler : uint8_t {
+        NONE = 0,
+        TWO = 1,
+        FOUR = 2,
+        EIGHT = 3
+    };
+
+    enum class GeneralPurposeTimerInputCaptureFilter : uint8_t {
+        NONE = 0, // No filter, sampling at fDTS
+        FTIM_KER_CK_N2 = 1, // fSAMPLING = ftim_ker_ck, N = 2
+        FTIM_KER_CK_N4 = 2, // fSAMPLING = ftim_ker_ck, N = 4
+        FTIM_KER_CK_N8 = 3, // fSAMPLING = ftim_ker_ck, N = 8
+        FDTS_DIV2_N6  = 4, // fSAMPLING = fDTS/2, N = 6
+        FDTS_DIV2_N8 = 5, // fSAMPLING = fDTS/2, N = 8
+        FDTS_DIV4_N6 = 6, // fSAMPLING = fDTS/4, N = 6
+        FDTS_DIV4_N8 = 7, // fSAMPLING = fDTS/4, N = 8
+        FDTS_DIV8_N6 = 8, // fSAMPLING = fDTS/8, N = 6
+        FDTS_DIV8_N8 = 9, // fSAMPLING = fDTS/8, N = 8
+        FDTS_DIV16_N5 = 10, // fSAMPLING = fDTS/16, N = 5
+        FDTS_DIV16_N6 = 11, // fSAMPLING = fDTS/16, N = 6
+        FDTS_DIV16_N8 = 12, // fSAMPLING = fDTS/16, N = 8
+        FDTS_DIV32_N5 = 13, // fSAMPLING = fDTS/32, N = 5
+        FDTS_DIV32_N6 = 14, // fSAMPLING = fDTS/32, N = 6
+        FDTS_DIV32_N8 = 15  // fSAMPLING = fDTS/32, N = 8
+    };
+
+    enum class GeneralPurposeTimerOutputCompareMode : uint8_t {
+        FROZEN = 0, // No effect on outputs
+        ACTIVE_ON_MATCH = 1, // Set active level on match
+        INACTIVE_ON_MATCH = 2, // Set inactive level on match
+        TOGGLE = 3, // Toggle output on match
+        FORCE_INACTIVE = 4, // Force inactive level
+        FORCE_ACTIVE = 5, // Force active level
+        PWM_MODE_1 = 6, // PWM mode 1
+        PWM_MODE_2 = 7, // PWM mode 2
+        RETRIGGERABLE_OPM_MODE_1 = 8, // Retriggerable OPM mode 1
+        RETRIGGERABLE_OPM_MODE_2 = 9, // Retriggerable OPM mode 2
+        COMBINED_PWM_MODE_1 = 12, // Combined PWM mode 1 (OR with OC2)
+        COMBINED_PWM_MODE_2 = 13, // Combined PWM mode 2 (AND with OC2)
+        ASYMMETRIC_PWM_MODE_1 = 14, // Asymmetric PWM mode 1
+        ASYMMETRIC_PWM_MODE_2 = 15 // Asymmetric PWM mode 2
+    };
+
+    enum class GeneralPurposeTimerCaptureCompareChannel {
+        CC1,
+        CC2,
+        CC3,
+        CC4
+    };
+
     struct GeneralPurposeTimerConfiguration {
         bool onlyCounterUpdates = false, onePulseMode = false, downcountingMode = false;
         GeneralPurposeTimerCenterAlignedMode centerAlignedMode = GeneralPurposeTimerCenterAlignedMode::EDGE_ALIGNED;
@@ -74,6 +131,19 @@ namespace stm32::system::tim {
     };
 
     //TODO: Slave mode configuration
+
+    struct GeneralPurposeTimerInputCaptureConfiguration {
+        GeneralPurposeTimerCaptureCompareSelection ccSelection = GeneralPurposeTimerCaptureCompareSelection::OUTPUT;
+        GeneralPurposeTimerInputCapturePrescaler prescaler = GeneralPurposeTimerInputCapturePrescaler::NONE;
+        GeneralPurposeTimerInputCaptureFilter filter = GeneralPurposeTimerInputCaptureFilter::NONE;
+    };
+
+    struct GeneralPurposeTimerOutputCompareConfiguration {
+        GeneralPurposeTimerCaptureCompareSelection ccSelection = GeneralPurposeTimerCaptureCompareSelection::OUTPUT;
+        bool fastEnable = false, preloadCCR = false;
+        GeneralPurposeTimerOutputCompareMode mode = GeneralPurposeTimerOutputCompareMode::FROZEN;
+        bool clearEnable = false;
+    };
 
     class GeneralPurposeTimerConfigurationBuilder {
         GeneralPurposeTimerConfiguration configuration;
@@ -108,6 +178,11 @@ namespace stm32::system::tim {
 
         void configure(const GeneralPurposeTimerConfiguration& configuration) const;
         [[nodiscard]] GeneralPurposeTimerConfiguration getConfiguration() const;
+
+        void configureInputCaptureChannel(const GeneralPurposeTimerInputCaptureConfiguration& configuration, GeneralPurposeTimerCaptureCompareChannel channel) const;
+        void configureOutputCompareChannel(const GeneralPurposeTimerOutputCompareConfiguration& configuration, GeneralPurposeTimerCaptureCompareChannel channel) const;
+        [[nodiscard]] GeneralPurposeTimerInputCaptureConfiguration getInputCaptureChannelConfiguration(GeneralPurposeTimerCaptureCompareChannel channel) const;
+        [[nodiscard]] GeneralPurposeTimerOutputCompareConfiguration getOutputCompareChannelConfiguration(GeneralPurposeTimerCaptureCompareChannel channel) const;
 
         void setClockPrescaler(uint16_t prescaler) const;
         void setAutoReloadValue(uint32_t value) const;

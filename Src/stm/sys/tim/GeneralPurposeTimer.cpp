@@ -4,6 +4,8 @@
 
 #include "../../../../Inc/stm/sys/Tim.h"
 
+#define EXTRACT_BITS(var, pos, mask) ((var & (mask << pos)) >> pos)
+
 namespace stm32::system::tim {
 
     void GeneralPurposeTimer::configure(const GeneralPurposeTimerConfiguration& configuration) const {
@@ -46,6 +48,73 @@ namespace stm32::system::tim {
             static_cast<GeneralPurposeTimerFilterPrescaler>(timerRegisters->CR1 & (0x3 << 8)),
             static_cast<bool>(timerRegisters->CR1 & (1 << 11)),
             static_cast<bool>(timerRegisters->CR1 & (1 << 12))
+        };
+    }
+
+    void GeneralPurposeTimer::configureInputCaptureChannel(const GeneralPurposeTimerInputCaptureConfiguration &configuration, const GeneralPurposeTimerCaptureCompareChannel channel) const {
+        volatile uint32_t* ccmr = &timerRegisters->CCMR1;
+        uint8_t offset = 0;
+
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+            ccmr = &timerRegisters->CCMR2;
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+            offset = 8;
+
+        *ccmr &= ~(0xFF << offset);
+        *ccmr |= (static_cast<uint8_t>(configuration.ccSelection) << offset) |
+            (static_cast<uint8_t>(configuration.prescaler) << (offset + 2)) |
+            (static_cast<uint8_t>(configuration.filter) << (offset + 4));
+    }
+
+    void GeneralPurposeTimer::configureOutputCompareChannel(const GeneralPurposeTimerOutputCompareConfiguration &configuration, const GeneralPurposeTimerCaptureCompareChannel channel) const {
+        volatile uint32_t* ccmr = &timerRegisters->CCMR1;
+        uint8_t offset = 0;
+
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+            ccmr = &timerRegisters->CCMR2;
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+            offset = 8;
+
+        *ccmr &= ~(0xFF << offset | (1 << (offset + 16)));
+        *ccmr |= (static_cast<uint8_t>(configuration.ccSelection) << offset) |
+            (configuration.fastEnable << (offset + 2)) |
+            (configuration.preloadCCR << (offset + 3)) |
+            (EXTRACT_BITS(static_cast<uint8_t>(configuration.mode), 0, 0x7) << (offset + 4)) |
+            (configuration.clearEnable << (offset + 7)) |
+            (EXTRACT_BITS(static_cast<uint8_t>(configuration.mode), 3, 1) << (offset + 16));
+    }
+
+    GeneralPurposeTimerInputCaptureConfiguration GeneralPurposeTimer::getInputCaptureChannelConfiguration(const GeneralPurposeTimerCaptureCompareChannel channel) const {
+        const volatile uint32_t* ccmr = &timerRegisters->CCMR1;
+        uint8_t offset = 0;
+
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+            ccmr = &timerRegisters->CCMR2;
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+            offset = 8;
+
+        return GeneralPurposeTimerInputCaptureConfiguration{
+            static_cast<GeneralPurposeTimerCaptureCompareSelection>(EXTRACT_BITS(*ccmr, offset, 0x3)),
+            static_cast<GeneralPurposeTimerInputCapturePrescaler>(EXTRACT_BITS(*ccmr, offset + 2, 0x3)),
+            static_cast<GeneralPurposeTimerInputCaptureFilter>(EXTRACT_BITS(*ccmr, offset + 4, 0xF)),
+        };
+    }
+
+    GeneralPurposeTimerOutputCompareConfiguration GeneralPurposeTimer::getOutputCompareChannelConfiguration(GeneralPurposeTimerCaptureCompareChannel channel) const {
+        const volatile uint32_t* ccmr = &timerRegisters->CCMR1;
+        uint8_t offset = 0;
+
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC3 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+            ccmr = &timerRegisters->CCMR2;
+        if (channel == GeneralPurposeTimerCaptureCompareChannel::CC2 | channel == GeneralPurposeTimerCaptureCompareChannel::CC4)
+            offset = 8;
+
+        return GeneralPurposeTimerOutputCompareConfiguration{
+            static_cast<GeneralPurposeTimerCaptureCompareSelection>(EXTRACT_BITS(*ccmr, offset, 0x3)),
+            static_cast<bool>(EXTRACT_BITS(*ccmr, offset + 2, 1)),
+            static_cast<bool>(EXTRACT_BITS(*ccmr, offset + 3, 1)),
+            static_cast<GeneralPurposeTimerOutputCompareMode>(EXTRACT_BITS(*ccmr, offset + 4, 0x7) | (EXTRACT_BITS(*ccmr, offset + 16, 1) << 3)),
+            static_cast<bool>(EXTRACT_BITS(*ccmr, offset + 7, 1))
         };
     }
 
