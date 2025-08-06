@@ -27,6 +27,8 @@ set(SOURCES
         Src/stm/sys/tim/BasicTimer.cpp
         Src/stm/sys/tim/GeneralPurposeTimerConfigurationBuilder.cpp
         Src/stm/sys/tim/GeneralPurposeTimer.cpp
+        Inc/stm/Result.h
+        Src/stm/Result.cpp
 )
 
 add_executable(cplusplus ${SOURCES})
