@@ -110,11 +110,11 @@ namespace stm32::system::tim {
         ASYMMETRIC_PWM_MODE_2 = 15 // Asymmetric PWM mode 2
     };
 
-    enum class GeneralPurposeTimerCaptureCompareChannel {
-        CC1,
-        CC2,
-        CC3,
-        CC4
+    enum class GeneralPurposeTimerCaptureCompareChannel : uint8_t {
+        CC1 = 0,
+        CC2 = 1,
+        CC3 = 2,
+        CC4 = 3
     };
 
     struct GeneralPurposeTimerConfiguration {
@@ -183,6 +183,12 @@ namespace stm32::system::tim {
         void configureOutputCompareChannel(const GeneralPurposeTimerOutputCompareConfiguration& configuration, GeneralPurposeTimerCaptureCompareChannel channel) const;
         [[nodiscard]] GeneralPurposeTimerInputCaptureConfiguration getInputCaptureChannelConfiguration(GeneralPurposeTimerCaptureCompareChannel channel) const;
         [[nodiscard]] GeneralPurposeTimerOutputCompareConfiguration getOutputCompareChannelConfiguration(GeneralPurposeTimerCaptureCompareChannel channel) const;
+
+        void setOutputCompareValue(GeneralPurposeTimerCaptureCompareChannel channel, uint32_t value) const;
+        [[nodiscard]] uint32_t getInputCaptureValue(GeneralPurposeTimerCaptureCompareChannel channel) const;
+
+        void enableCaptureCompareChannel(GeneralPurposeTimerCaptureCompareChannel channel, bool inputCapture, bool activeLow = false) const;
+        void disableCaptureCompareChannel(GeneralPurposeTimerCaptureCompareChannel channel) const;
 
         void setClockPrescaler(uint16_t prescaler) const;
         void setAutoReloadValue(uint32_t value) const;

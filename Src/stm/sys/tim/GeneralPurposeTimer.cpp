@@ -118,14 +118,35 @@ namespace stm32::system::tim {
         };
     }
 
+    void GeneralPurposeTimer::enableCaptureCompareChannel(const GeneralPurposeTimerCaptureCompareChannel channel, const bool inputCapture, const bool activeLow) const {
+        timerRegisters->CCER &= ~((1 << 1 | 1 << 3) << (static_cast<uint8_t>(channel) * 4));
+        timerRegisters->CCER |= ((activeLow << 1) | (inputCapture << 3)) << (static_cast<uint8_t>(channel) * 4);
+        timerRegisters->CCER |= 1 << (static_cast<uint8_t>(channel) *  4);
+    }
+
+    void GeneralPurposeTimer::disableCaptureCompareChannel(GeneralPurposeTimerCaptureCompareChannel channel) const {
+        timerRegisters->CCER &= ~(1 << (static_cast<uint8_t>(channel) * 4));
+    }
+
+    void GeneralPurposeTimer::setOutputCompareValue(const GeneralPurposeTimerCaptureCompareChannel channel, const uint32_t value) const {
+        volatile uint32_t* ccr = &timerRegisters->CCER + 0x4 * static_cast<uint8_t>(channel);
+        *ccr &= isThirtyTwoBit ? 0xFFFFFFFF : 0xFFFFF;
+        *ccr |= isThirtyTwoBit ? value : (value & 0xFFFFF);
+    }
+
+    uint32_t GeneralPurposeTimer::getInputCaptureValue(GeneralPurposeTimerCaptureCompareChannel channel) const {
+        const volatile uint32_t* ccr = &timerRegisters->CCER + 0x4 * static_cast<uint8_t>(channel);
+        return isThirtyTwoBit ? *ccr : (*ccr & 0xFFFFF);
+    }
+
     void GeneralPurposeTimer::setClockPrescaler(const uint16_t prescaler) const {
         timerRegisters->PSC &= ~0xFFFF;
         timerRegisters->PSC |= prescaler;
     }
 
     void GeneralPurposeTimer::setAutoReloadValue(const uint32_t value) const {
-        timerRegisters->ARR &= isThirtyTwoBit ? 0xFFFFFFFF : 0x7FFFF;
-        timerRegisters->ARR |= isThirtyTwoBit ? value : (value & 0x7FFFF);
+        timerRegisters->ARR &= isThirtyTwoBit ? 0xFFFFFFFF : 0xFFFFF;
+        timerRegisters->ARR |= isThirtyTwoBit ? value : (value & 0xFFFFF);
     }
 
     void GeneralPurposeTimer::enableUpdates() const {
