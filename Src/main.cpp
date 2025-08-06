@@ -58,11 +58,12 @@ int main()
     rcc->AHB2ENR |= 0x1 << 13; //adc 1
 	rcc->AHB1ENR |= 0x1; //dma 1
 	rcc->AHB1ENR |= 0x1 << 2; //dmamux
-	rcc->APB1ENR1 |= 0x1 << 4; //tim 6
+	rcc->APB1ENR1 |= 0x1; //tim 2
     asm("nop; nop; nop");
 
     gpioA.configureGpio(0, dacPinConfig);
     gpioA.configureGpio(4, dacPinConfig);
+	gpioA.setGpioAlternativeFunction(1, digital::gpio::PinAlternativeFunction::AF1);
 
     dac1.disable(analog::dac::Channel::DUAL);
     dac1.configure(dac1configuration, analog::dac::Channel::DUAL);
@@ -119,11 +120,11 @@ int main()
 		system::tim::GeneralPurposeTimerOutputCompareMode::FORCE_ACTIVE,
 		false
 	};
-	tim2.configureOutputCompareChannel(cc1_compare_configuration, system::tim::GeneralPurposeTimerCaptureCompareChannel::CC1);
+	tim2.configureOutputCompareChannel(cc1_compare_configuration, system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2);
 
 	tim2.setClockPrescaler(10000);
 	tim2.setAutoReloadValue(10000);
-	tim2.setOutputCompareValue(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC1, 5000);
+	tim2.setOutputCompareValue(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2, 5000);
 
 	tim2.startCounter();
 
