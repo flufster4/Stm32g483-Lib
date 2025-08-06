@@ -40,6 +40,7 @@ int main()
     digital::gpio::Gpio gpioA(0x4800'0000);
     digital::gpio::GpioPinConfiguration outputPinConfig{};
     digital::gpio::GpioPinConfiguration dacPinConfig(digital::gpio::PinMode::Analog);
+	digital::gpio::GpioPinConfiguration afPinConfig(digital::gpio::PinMode::Alternative);
 
     analog::dac::Dac dac1(0x5000'0800);
     analog::dac::DacChannelConfiguration dac1configuration = {};
@@ -63,6 +64,7 @@ int main()
 
     gpioA.configureGpio(digital::gpio::Pin::PIN_0, dacPinConfig);
     gpioA.configureGpio(digital::gpio::Pin::PIN_4, dacPinConfig);
+	gpioA.configureGpio(digital::gpio::Pin::PIN_1, afPinConfig);
 	gpioA.setGpioAlternativeFunction(digital::gpio::Pin::PIN_1, digital::gpio::PinAlternativeFunction::AF1);
 
     dac1.disable(analog::dac::Channel::DUAL);
@@ -117,14 +119,15 @@ int main()
 		system::tim::GeneralPurposeTimerCaptureCompareSelection::OUTPUT,
 		false,
 		true,
-		system::tim::GeneralPurposeTimerOutputCompareMode::FORCE_ACTIVE,
+		system::tim::GeneralPurposeTimerOutputCompareMode::PWM_MODE_1,
 		false
 	};
 	tim2.configureOutputCompareChannel(cc1_compare_configuration, system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2);
+	tim2.enableCaptureCompareChannel(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2, false);
 
-	tim2.setClockPrescaler(10000);
-	tim2.setAutoReloadValue(10000);
-	tim2.setOutputCompareValue(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2, 5000);
+	tim2.setClockPrescaler(100);
+	tim2.setAutoReloadValue(100);
+	tim2.setOutputCompareValue(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2, 25);
 
 	tim2.startCounter();
 
@@ -134,6 +137,17 @@ int main()
 			adc_buffer[0],
 			analog::dac::Channel::CHANNEL1
 		);
+		uint32_t adc_sum = 0;
+		const int samples = 16;
+
+		for (int i = 0; i < samples; i++) {
+		    adc_sum += adc_buffer[i];
+		}
+
+		uint32_t adc_avg = adc_sum / samples;
+		uint32_t val = (adc_avg * 100) / 4095;
+
+		tim2.setOutputCompareValue(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2, val*2);
 	}
 
 }
