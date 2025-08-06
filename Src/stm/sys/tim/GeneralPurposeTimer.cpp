@@ -100,7 +100,7 @@ namespace stm32::system::tim {
         };
     }
 
-    GeneralPurposeTimerOutputCompareConfiguration GeneralPurposeTimer::getOutputCompareChannelConfiguration(GeneralPurposeTimerCaptureCompareChannel channel) const {
+    GeneralPurposeTimerOutputCompareConfiguration GeneralPurposeTimer::getOutputCompareChannelConfiguration(const GeneralPurposeTimerCaptureCompareChannel channel) const {
         const volatile uint32_t* ccmr = &timerRegisters->CCMR1;
         uint8_t offset = 0;
 

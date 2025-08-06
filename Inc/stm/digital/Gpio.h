@@ -59,6 +59,25 @@ namespace stm32::digital::gpio {
         AF15 = 15
     };
 
+    enum class Pin : uint8_t {
+        PIN_0 = 0,
+        PIN_1 = 1,
+        PIN_2 = 2,
+        PIN_3 = 3,
+        PIN_4 = 4,
+        PIN_5 = 5,
+        PIN_6 = 6,
+        PIN_7 = 7,
+        PIN_8 = 8,
+        PIN_9 = 9,
+        PIN_10 = 10,
+        PIN_11 = 11,
+        PIN_12 = 12,
+        PIN_13 = 13,
+        PIN_14 = 14,
+        PIN_15 = 15,
+    };
+
     struct GpioPinConfiguration {
         PinMode mode;
         PinType type;
@@ -79,15 +98,15 @@ namespace stm32::digital::gpio {
     public:
         explicit Gpio(const uint32_t gpioBaseAddress) : gpioRegisters(reinterpret_cast<GpioRegisters*>(gpioBaseAddress)) {}
 
-        void configureGpio(uint8_t pin, GpioPinConfiguration &configuration) const;
+        void configureGpio(Pin pin, GpioPinConfiguration &configuration) const;
 
-        void setGpioAlternativeFunction(uint8_t pin, PinAlternativeFunction function) const;
+        void setGpioAlternativeFunction(Pin pin, PinAlternativeFunction function) const;
 
-        void writeGpio(uint8_t pin, bool on = true) const;
+        void writeGpio(Pin pin, bool on = true) const;
 
-        void toggleGpio(uint8_t pin) const;
+        void toggleGpio(Pin pin) const;
 
-        [[nodiscard]] bool readGpio(uint8_t pin) const;
+        [[nodiscard]] bool readGpio(Pin pin) const;
 
         template<typename... Args> requires ((!std::is_signed_v<Args> && sizeof(Args) == 1) && ...)
         bool lockPins(Args... pins) {

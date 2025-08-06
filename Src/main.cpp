@@ -61,9 +61,9 @@ int main()
 	rcc->APB1ENR1 |= 0x1; //tim 2
     asm("nop; nop; nop");
 
-    gpioA.configureGpio(0, dacPinConfig);
-    gpioA.configureGpio(4, dacPinConfig);
-	gpioA.setGpioAlternativeFunction(1, digital::gpio::PinAlternativeFunction::AF1);
+    gpioA.configureGpio(digital::gpio::Pin::PIN_0, dacPinConfig);
+    gpioA.configureGpio(digital::gpio::Pin::PIN_4, dacPinConfig);
+	gpioA.setGpioAlternativeFunction(digital::gpio::Pin::PIN_1, digital::gpio::PinAlternativeFunction::AF1);
 
     dac1.disable(analog::dac::Channel::DUAL);
     dac1.configure(dac1configuration, analog::dac::Channel::DUAL);
@@ -86,7 +86,7 @@ int main()
 		.build();
 	adc1.configureAdc(adcConfig);
 
-	dma1.disableChannel(1);
+	dma1.disableChannel(system::dma::DmaChannel::CHANNEL_1);
 
 	system::dma::DmaChannelConfiguration dmaConfig = system::dma::DmaChannelConfigurationBuilder()
 		.setPriority(system::dma::DmaChannelPriority::VERY_HIGH)
@@ -96,17 +96,17 @@ int main()
 		.setDataSize(system::dma::DmaDataSize::SIXTEEN_BIT, system::dma::DmaDataSize::SIXTEEN_BIT)
 		.setDataAddress(adc1.getDrAddress(), (uint32_t*)adc_buffer)
 		.build();
-	dma1.configureChannel(dmaConfig, 1);
+	dma1.configureChannel(dmaConfig, system::dma::DmaChannel::CHANNEL_1);
 
 	system::dma::DmaMuxChannelConfiguration dmamuxConfig = system::dma::DmaMuxChannelConfigurationBuilder()
 		.setDmaRequest(system::dma::DmaMuxDmaInput::ADC1)
 		.setNumberOfRequests(1)
 		.build();
-	dmamux.configureChannel(dmamuxConfig, 0);
+	dmamux.configureChannel(dmamuxConfig, system::dma::DmaMuxChannel::DMA1_CHANNEL1);
 
 	adc1.enable();
 	adc1.startConversion();
-	dma1.enableChannel(1);
+	dma1.enableChannel(system::dma::DmaChannel::CHANNEL_1);
 
 	tim2.stopCounter();
 

@@ -181,6 +181,40 @@ namespace stm32::system::dma {
         LPTIM1_OUT = 20
     };
 
+    enum class DmaChannel : uint8_t {
+        CHANNEL_1 = 1,
+        CHANNEL_2 = 2,
+        CHANNEL_3 = 3,
+        CHANNEL_4 = 4,
+        CHANNEL_5 = 5,
+        CHANNEL_6 = 6,
+        CHANNEL_7 = 7
+    };
+
+    enum class DmaMuxChannel : uint8_t {
+        DMA1_CHANNEL1 = 0,
+        DMA1_CHANNEL2 = 1,
+        DMA1_CHANNEL3 = 2,
+        DMA1_CHANNEL4 = 3,
+        DMA1_CHANNEL5 = 4,
+        DMA1_CHANNEL6 = 5,
+        DMA1_CHANNEL7 = 6,
+        DMA2_CHANNEL1 = 7,
+        DMA2_CHANNEL2 = 8,
+        DMA2_CHANNEL3 = 9,
+        DMA2_CHANNEL4 = 10,
+        DMA2_CHANNEL5 = 11,
+        DMA2_CHANNEL6 = 12,
+        DMA2_CHANNEL7 = 13,
+    };
+
+    enum class DmaMuxGeneratorChannel : uint8_t {
+        CHANNEL_0 = 0,
+        CHANNEL_1 = 1,
+        CHANNEL_2 = 2,
+        CHANNEL_3 = 3
+    };
+
     struct DmaChannelStatus {
         bool global, transferComplete, halfTransfer, transferError;
     };
@@ -270,16 +304,16 @@ namespace stm32::system::dma {
     public:
         explicit DmaMux(const uint32_t baseAddress) : dmaMuxRegisters(reinterpret_cast<DmaMuxRegisters*>(baseAddress)) {}
 
-        void configureChannel(const DmaMuxChannelConfiguration& configuration, uint8_t channel) const;
-        void configureGeneratorChannel(const DmaMuxGeneratorChannelConfiguration& configuration, uint8_t channel) const;
+        void configureChannel(const DmaMuxChannelConfiguration& configuration, DmaMuxChannel channel) const;
+        void configureGeneratorChannel(const DmaMuxGeneratorChannelConfiguration& configuration, DmaMuxGeneratorChannel channel) const;
 
-        [[nodiscard]] bool isChannelSynchronizationOverrun(uint8_t channel) const;
-        [[nodiscard]] bool isGeneratorChannelTriggerOverrun(uint8_t channel) const;
-        void clearChannelSynchronizationOverrun(uint8_t channel) const;
-        void clearGeneratorChannelTriggerOverrun(uint8_t channel) const;
+        [[nodiscard]] bool isChannelSynchronizationOverrun(DmaMuxChannel channel) const;
+        [[nodiscard]] bool isGeneratorChannelTriggerOverrun(DmaMuxGeneratorChannel channel) const;
+        void clearChannelSynchronizationOverrun(DmaMuxChannel channel) const;
+        void clearGeneratorChannelTriggerOverrun(DmaMuxGeneratorChannel channel) const;
 
-        void enableGeneratorChannel(uint8_t channel) const;
-        void disableGeneratorChannel(uint8_t channel) const;
+        void enableGeneratorChannel(DmaMuxGeneratorChannel channel) const;
+        void disableGeneratorChannel(DmaMuxGeneratorChannel channel) const;
     };
 
     class Dma {
@@ -288,11 +322,11 @@ namespace stm32::system::dma {
     public:
         explicit Dma(const uint32_t baseAddress) : dmaRegisters(reinterpret_cast<DmaRegisters*>(baseAddress)) {}
 
-        [[nodiscard]] DmaChannelStatus getStatus(uint8_t channel) const;
-        void clearInterruptFlags(const DmaChannelStatus& flags, uint8_t channel) const;
-        void configureChannel(const DmaChannelConfiguration& configuration, uint8_t channel) const;
-        void enableChannel(uint8_t channel) const;
-        void disableChannel(uint8_t channel) const;
+        [[nodiscard]] DmaChannelStatus getStatus(DmaChannel channel) const;
+        void clearInterruptFlags(const DmaChannelStatus& flags, DmaChannel channel) const;
+        void configureChannel(const DmaChannelConfiguration& configuration, DmaChannel channel) const;
+        void enableChannel(DmaChannel channel) const;
+        void disableChannel(DmaChannel channel) const;
     };
 
 }

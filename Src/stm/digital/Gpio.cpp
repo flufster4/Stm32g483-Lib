@@ -8,50 +8,47 @@
 
 namespace stm32::digital::gpio {
 
-    void Gpio::configureGpio(const uint8_t pin, GpioPinConfiguration &configuration) const {
-        if (pin > 15)
-            return;
+    void Gpio::configureGpio(const Pin pin, GpioPinConfiguration &configuration) const {
+        const auto pin_number = static_cast<uint8_t>(pin);
 
-        gpioRegisters->MODER &= ~(0b11 << pin * 2);
-        gpioRegisters->MODER |= static_cast<uint8_t>(configuration.mode) << pin * 2;
+        gpioRegisters->MODER &= ~(0b11 << pin_number * 2);
+        gpioRegisters->MODER |= static_cast<uint8_t>(configuration.mode) << pin_number * 2;
 
-        gpioRegisters->OTYPER &= ~(1 << pin);
-        gpioRegisters->OTYPER |= static_cast<uint8_t>(configuration.type) << pin;
+        gpioRegisters->OTYPER &= ~(1 << pin_number);
+        gpioRegisters->OTYPER |= static_cast<uint8_t>(configuration.type) << pin_number;
 
-        gpioRegisters->OSPEEDR &= ~(0b11 << pin * 2);
-        gpioRegisters->OSPEEDR |= static_cast<uint8_t>(configuration.speed) << pin * 2;
+        gpioRegisters->OSPEEDR &= ~(0b11 << pin_number * 2);
+        gpioRegisters->OSPEEDR |= static_cast<uint8_t>(configuration.speed) << pin_number * 2;
 
-        gpioRegisters->PUPDR &= ~(0b11 << pin * 2);
-        gpioRegisters->PUPDR |= static_cast<uint8_t>(configuration.pull) << pin * 2;
+        gpioRegisters->PUPDR &= ~(0b11 << pin_number * 2);
+        gpioRegisters->PUPDR |= static_cast<uint8_t>(configuration.pull) << pin_number * 2;
     }
 
-    void Gpio::setGpioAlternativeFunction(const uint8_t pin, const PinAlternativeFunction function) const {
-        volatile uint32_t* afr = (pin > 7) ? &gpioRegisters->AFRH : &gpioRegisters->AFRL;
-        *afr &= (0xF << (pin * 4));
-        *afr |= static_cast<uint8_t>(function) << (pin * 4);
+    void Gpio::setGpioAlternativeFunction(const Pin pin, const PinAlternativeFunction function) const {
+        const auto pin_number = static_cast<uint8_t>(pin);
+
+        volatile uint32_t* afr = (pin_number > 7) ? &gpioRegisters->AFRH : &gpioRegisters->AFRL;
+        *afr &= (0xF << (pin_number * 4));
+        *afr |= static_cast<uint8_t>(function) << (pin_number * 4);
     }
 
-
-    void Gpio::writeGpio(const uint8_t pin, const bool on) const {
-        if (pin > 15)
-            return;
+    void Gpio::writeGpio(const Pin pin, const bool on) const {
+        const auto pin_number = static_cast<uint8_t>(pin);
 
         if (on)
-            gpioRegisters->BSRR |= 1 << pin;
+            gpioRegisters->BSRR |= 1 << pin_number;
         else
-            gpioRegisters->BSRR |= 1 << 16 << pin;
+            gpioRegisters->BSRR |= 1 << 16 << pin_number;
     }
 
-    void Gpio::toggleGpio(const uint8_t pin) const {
-        if (pin > 15)
-            return;
-        gpioRegisters->ODR ^= 1 << pin;
+    void Gpio::toggleGpio(const Pin pin) const {
+        const auto pin_number = static_cast<uint8_t>(pin);
+        gpioRegisters->ODR ^= 1 << pin_number;
     }
 
-    bool Gpio::readGpio(const uint8_t pin) const {
-        if (pin > 15)
-            return false;
-        return gpioRegisters->IDR & 1 << pin;
+    bool Gpio::readGpio(const Pin pin) const {
+        const auto pin_number = static_cast<uint8_t>(pin);
+        return gpioRegisters->IDR & 1 << pin_number;
     }
 
 }

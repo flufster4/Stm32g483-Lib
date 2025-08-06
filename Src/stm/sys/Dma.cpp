@@ -6,25 +6,25 @@
 
 namespace stm32::system::dma {
 
-    void Dma::enableChannel(const uint8_t channel) const {
-        const uint8_t bndChannel = (channel <= 8) ? channel : 8;
-        volatile uint32_t* ccr = &dmaRegisters->CCR1 + 0x14 * (bndChannel - 1);
+    void Dma::enableChannel(const DmaChannel channel) const {
+        const auto channel_number = static_cast<uint8_t>(channel);
+        volatile uint32_t* ccr = &dmaRegisters->CCR1 + 0x14 * (channel_number - 1);
         *ccr |= 1;
     }
 
-    void Dma::disableChannel(const uint8_t channel) const {
-        const uint8_t bndChannel = (channel <= 8) ? channel : 8;
-        volatile uint32_t* ccr = &dmaRegisters->CCR1 + 0x14 * (bndChannel - 1);
+    void Dma::disableChannel(const DmaChannel channel) const {
+        const auto channel_number = static_cast<uint8_t>(channel);
+        volatile uint32_t* ccr = &dmaRegisters->CCR1 + 0x14 * (channel_number - 1);
         *ccr &= ~1;
     }
 
-    void Dma::configureChannel(const DmaChannelConfiguration& configuration, const uint8_t channel) const {
-        const uint8_t bndChannel = (channel <= 8) ? channel : 8;
+    void Dma::configureChannel(const DmaChannelConfiguration& configuration, const DmaChannel channel) const {
+        const auto channel_number = static_cast<uint8_t>(channel);
 
-        volatile uint32_t* ccr = &dmaRegisters->CCR1 + 0x14 * (bndChannel - 1);
-        volatile uint32_t* cndtr = &dmaRegisters->CNDTR1 + 0x14 * (bndChannel - 1);
-        volatile uint32_t* cpar = &dmaRegisters->CPAR1 + 0x14 * (bndChannel - 1);
-        volatile uint32_t* cmar = &dmaRegisters->CMAR1 + 0x14 * (bndChannel - 1);
+        volatile uint32_t* ccr = &dmaRegisters->CCR1 + 0x14 * (channel_number - 1);
+        volatile uint32_t* cndtr = &dmaRegisters->CNDTR1 + 0x14 * (channel_number - 1);
+        volatile uint32_t* cpar = &dmaRegisters->CPAR1 + 0x14 * (channel_number - 1);
+        volatile uint32_t* cmar = &dmaRegisters->CMAR1 + 0x14 * (channel_number - 1);
 
         *ccr &= ~0x7FFF;
         *ccr |= (configuration.transferCompleteInterrupt << 1) |
@@ -49,22 +49,22 @@ namespace stm32::system::dma {
         *cmar = (uint32_t)configuration.memoryAddress;
     }
 
-    DmaChannelStatus Dma::getStatus(const uint8_t channel) const {
-        const uint8_t bndChannel = ((channel > 8) ? 8 : ((channel < 1) ? 0 : (channel - 1))) * 4; //Offset
+    DmaChannelStatus Dma::getStatus(const DmaChannel channel) const {
+        const uint8_t channelOffset = (static_cast<uint8_t>(channel) - 1) * 4;
         return DmaChannelStatus{
-            static_cast<bool>(dmaRegisters->ISR & (1 << bndChannel)),
-            static_cast<bool>(dmaRegisters->ISR & (1 << (bndChannel + 1))),
-            static_cast<bool>(dmaRegisters->ISR & (1 << (bndChannel + 2))),
-            static_cast<bool>(dmaRegisters->ISR & (1 << (bndChannel + 3)))
+            static_cast<bool>(dmaRegisters->ISR & (1 << channelOffset)),
+            static_cast<bool>(dmaRegisters->ISR & (1 << (channelOffset + 1))),
+            static_cast<bool>(dmaRegisters->ISR & (1 << (channelOffset + 2))),
+            static_cast<bool>(dmaRegisters->ISR & (1 << (channelOffset + 3)))
         };
     }
 
-    void Dma::clearInterruptFlags(const DmaChannelStatus& flags, const uint8_t channel) const {
-        const uint8_t bndChannel = ((channel > 8) ? 8 : ((channel < 1) ? 0 : (channel - 1))) * 4; //Offset
-        dmaRegisters->IFCR |= (flags.global << bndChannel) |
-            (flags.transferComplete << (bndChannel + 1)) |
-            (flags.halfTransfer << (bndChannel + 2)) |
-            (flags.transferError << (bndChannel + 3));
+    void Dma::clearInterruptFlags(const DmaChannelStatus& flags, const DmaChannel channel) const {
+        const uint8_t channelOffset = (static_cast<uint8_t>(channel) - 1) * 4;
+        dmaRegisters->IFCR |= (flags.global << channelOffset) |
+            (flags.transferComplete << (channelOffset + 1)) |
+            (flags.halfTransfer << (channelOffset + 2)) |
+            (flags.transferError << (channelOffset + 3));
     }
 
 }
