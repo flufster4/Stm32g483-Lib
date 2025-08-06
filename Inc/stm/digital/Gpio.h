@@ -83,13 +83,15 @@ namespace stm32::digital::gpio {
         PinType type;
         PinSpeed speed;
         PinPull pull;
+        PinAlternativeFunction alternativeFunction;
 
         explicit constexpr GpioPinConfiguration(
             const PinMode mode = PinMode::Output,
             const PinType type = PinType::PushPull,
             const PinSpeed speed = PinSpeed::Low,
-            const PinPull pull = PinPull::None
-            ) : mode(mode), type(type), speed(speed), pull(pull) {}
+            const PinPull pull = PinPull::None,
+            const PinAlternativeFunction af = PinAlternativeFunction::AF0
+            ) : mode(mode), type(type), speed(speed), pull(pull), alternativeFunction(af) {}
     };
 
     class Gpio {
@@ -99,8 +101,6 @@ namespace stm32::digital::gpio {
         explicit Gpio(const uint32_t gpioBaseAddress) : gpioRegisters(reinterpret_cast<GpioRegisters*>(gpioBaseAddress)) {}
 
         void configureGpio(Pin pin, GpioPinConfiguration &configuration) const;
-
-        void setGpioAlternativeFunction(Pin pin, PinAlternativeFunction function) const;
 
         void writeGpio(Pin pin, bool on = true) const;
 

@@ -22,15 +22,11 @@ namespace stm32::digital::gpio {
 
         gpioRegisters->PUPDR &= ~(0b11 << pin_number * 2);
         gpioRegisters->PUPDR |= static_cast<uint8_t>(configuration.pull) << pin_number * 2;
-    }
 
-    void Gpio::setGpioAlternativeFunction(const Pin pin, const PinAlternativeFunction function) const {
-        const auto pin_number = static_cast<uint8_t>(pin);
         volatile uint32_t* afr = (pin_number > 7) ? &gpioRegisters->AFRH : &gpioRegisters->AFRL;
         const uint8_t shift = (pin_number % 8) * 4;
-
         *afr &= ~(0xF << shift);
-        *afr |= (static_cast<uint8_t>(function) << shift);
+        *afr |= (static_cast<uint8_t>(configuration.alternativeFunction) << shift);
     }
 
     void Gpio::writeGpio(const Pin pin, const bool on) const {

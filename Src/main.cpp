@@ -40,7 +40,13 @@ int main()
     digital::gpio::Gpio gpioA(0x4800'0000);
     digital::gpio::GpioPinConfiguration outputPinConfig{};
     digital::gpio::GpioPinConfiguration dacPinConfig(digital::gpio::PinMode::Analog);
-	digital::gpio::GpioPinConfiguration afPinConfig(digital::gpio::PinMode::Alternative);
+	digital::gpio::GpioPinConfiguration afPinConfig(
+		digital::gpio::PinMode::Alternative,
+		digital::gpio::PinType::PushPull,
+		digital::gpio::PinSpeed::VeryHigh,
+		digital::gpio::PinPull::None,
+		digital::gpio::PinAlternativeFunction::AF1
+	);
 
     analog::dac::Dac dac1(0x5000'0800);
     analog::dac::DacChannelConfiguration dac1configuration = {};
@@ -65,7 +71,6 @@ int main()
     gpioA.configureGpio(digital::gpio::Pin::PIN_0, dacPinConfig);
     gpioA.configureGpio(digital::gpio::Pin::PIN_4, dacPinConfig);
 	gpioA.configureGpio(digital::gpio::Pin::PIN_1, afPinConfig);
-	gpioA.setGpioAlternativeFunction(digital::gpio::Pin::PIN_1, digital::gpio::PinAlternativeFunction::AF1);
 
     dac1.disable(analog::dac::Channel::DUAL);
     dac1.configure(dac1configuration, analog::dac::Channel::DUAL);
