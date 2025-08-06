@@ -49,7 +49,7 @@ int main()
 	system::dma::Dma dma1(0x4002'0000);
 	system::dma::DmaMux dmamux(0x4002'0800);
 
-	system::tim::BasicTimer tim6(0x4000'1000)
+	system::tim::GeneralPurposeTimer tim2(0x4000'0000, true);
 
     rcc->AHB2ENR |= 0x1; //gpio a
     rcc->AHB2ENR |= 0x1 << 16; //dac 1
@@ -107,14 +107,25 @@ int main()
 	adc1.startConversion();
 	dma1.enableChannel(1);
 
-	tim6.stopCounter();
+	tim2.stopCounter();
 
-	tim6.setClockPrescaler(1);
-	tim6.setAutoReloadValue(16);
-	system::tim::BasicTimerConfiguration tim6_config = system::tim::BasicTimerConfigurationBuilder().build();
-	tim6.configure(tim6_config);
+	system::tim::GeneralPurposeTimerConfiguration tim2_configuration = system::tim::GeneralPurposeTimerConfigurationBuilder().build();
+	tim2.configure(tim2_configuration);
 
-	tim6.startCounter();
+	system::tim::GeneralPurposeTimerOutputCompareConfiguration cc1_compare_configuration = {
+		system::tim::GeneralPurposeTimerCaptureCompareSelection::OUTPUT,
+		false,
+		true,
+		system::tim::GeneralPurposeTimerOutputCompareMode::FORCE_ACTIVE,
+		false
+	};
+	tim2.configureOutputCompareChannel(cc1_compare_configuration, system::tim::GeneralPurposeTimerCaptureCompareChannel::CC1);
+
+	tim2.setClockPrescaler(10000);
+	tim2.setAutoReloadValue(10000);
+	tim2.setOutputCompareValue(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC1, 5000);
+
+	tim2.startCounter();
 
     /* Loop forever */
 	for(;;) {
