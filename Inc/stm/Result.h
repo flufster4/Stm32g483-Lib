@@ -6,18 +6,25 @@
 
 namespace stm32 {
 
+    template<typename T>
     class Result {
-        explicit Result(const bool successful, const char* message = nullptr) : successful(successful), message(message) {}
+        explicit Result(const bool successful, const char* message, const T result) : successful(successful), message(message), result(result) {}
 
     public:
-        bool successful = false;
-        const char* message = nullptr;
+        bool successful;
+        const char* message;
+        T result;
 
-        [[nodiscard]] static Result ok();
-        [[nodiscard]] static Result fail(const char* message);
+        [[nodiscard]] static Result ok(T result) { return{true, nullptr, result}; }
+        [[nodiscard]] static Result fail(const char* message) { return{false, message, T{}}; }
 
-        bool operator==(const Result& other) const;
-        bool operator!=(const Result& other) const;
+        bool operator==(const Result& other) const {
+            return this->successful == other.successful && this->result == other.result;
+        }
+
+        bool operator!=(const Result& other) const {
+            return this->successful != other.successful || this->result != other.result;
+        }
     };
 
 }

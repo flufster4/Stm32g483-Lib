@@ -28,9 +28,10 @@ set(SOURCES
         Src/stm/sys/tim/GeneralPurposeTimerConfigurationBuilder.cpp
         Src/stm/sys/tim/GeneralPurposeTimer.cpp
         Inc/stm/Result.h
-        Src/stm/Result.cpp
         Inc/stm/sys/GeneralPurposeTim.h
         Inc/stm/sys/BasicTim.h
+        Inc/stm/sys/Rng.h
+        Src/stm/sys/RandomNumberGenerator.cpp
 )
 
 add_executable(cplusplus ${SOURCES})
