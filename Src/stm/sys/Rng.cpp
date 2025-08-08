@@ -8,22 +8,22 @@
 
 namespace stm32::system::rng {
 
-    void RandomNumberGenerator::enableInterrupts(const bool enable) const {
+    void Rng::enableInterrupts(const bool enable) const {
         rngRegisters->CR &= ~(1 << 3);
         rngRegisters->CR |= (enable << 3);
     }
 
-    void RandomNumberGenerator::enableClockErrorDetection(const bool enable) const {
+    void Rng::enableClockErrorDetection(const bool enable) const {
         rngRegisters->CR &= ~(1 << 5);
         rngRegisters->CR |= (!enable << 5);
     }
 
-    void RandomNumberGenerator::enableNumberGeneration(const bool enable) const {
+    void Rng::enableNumberGeneration(const bool enable) const {
         rngRegisters->CR &= ~(1 << 2);
         rngRegisters->CR |= (enable << 2);
     }
 
-    Result<uint32_t> RandomNumberGenerator::getValue() const {
+    Result<uint32_t> Rng::getValue() const {
         if (!(rngRegisters->SR & 1))
             return Result<uint32_t>::fail("Not ready");
         if (rngRegisters->SR & (1 << 1))
@@ -34,7 +34,7 @@ namespace stm32::system::rng {
         return Result<uint32_t>::ok(rngRegisters->DR);
     }
 
-    RngStatus RandomNumberGenerator::getStatus() const {
+    RngStatus Rng::getStatus() const {
         return RngStatus{
             static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 0, 1)),
             static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 1, 1)),

@@ -17,11 +17,11 @@ set(SOURCES
         Src/stm/analog/AdcConversionSequenceBuilder.cpp
         Src/stm/analog/AdcConfigurationBuilder.cpp
         Inc/stm/sys/Dma.h
-        Src/stm/sys/Dma.cpp
-        Src/stm/sys/DmaChannelConfigurationBuilder.cpp
-        Src/stm/sys/DmaMuxGeneratorChannelConfigurationBuilder.cpp
-        Src/stm/sys/DmaMuxChannelConfigurationBuilder.cpp
-        Src/stm/sys/DmaMux.cpp
+        Src/stm/sys/dma/Dma.cpp
+        Src/stm/sys/dma/DmaChannelConfigurationBuilder.cpp
+        Src/stm/sys/dma/DmaMuxGeneratorChannelConfigurationBuilder.cpp
+        Src/stm/sys/dma/DmaMuxChannelConfigurationBuilder.cpp
+        Src/stm/sys/dma/DmaMux.cpp
         Inc/stm/sys/Tim.h
         Src/stm/sys/tim/BasicTimerConfigurationBuilder.cpp
         Src/stm/sys/tim/BasicTimer.cpp
@@ -31,7 +31,10 @@ set(SOURCES
         Inc/stm/sys/GeneralPurposeTim.h
         Inc/stm/sys/BasicTim.h
         Inc/stm/sys/Rng.h
-        Src/stm/sys/RandomNumberGenerator.cpp
+        Src/stm/sys/Rng.cpp
+        Inc/stm/sys/Crc.h
+        Src/stm/sys/crc/CrcPolynomialBuilder.cpp
+        Src/stm/sys/crc/Crc.cpp
 )
 
 add_executable(cplusplus ${SOURCES})

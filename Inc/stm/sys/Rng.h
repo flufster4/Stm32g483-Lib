@@ -17,11 +17,11 @@ namespace stm32::system::rng {
         bool dataReader, clockError, seedError, clockErrorInterrupt, seedErrorInterrupt;
     };
 
-    class RandomNumberGenerator {
+    class Rng {
         RngRegisters* rngRegisters;
 
     public:
-        explicit RandomNumberGenerator(const uint32_t baseAddress = 0x5006'0800) : rngRegisters(reinterpret_cast<RngRegisters*>(baseAddress)) {}
+        explicit Rng(const uint32_t baseAddress = 0x5006'0800) : rngRegisters(reinterpret_cast<RngRegisters*>(baseAddress)) {}
 
         void enableInterrupts(bool enable = true) const;
         void enableClockErrorDetection(bool enable = true) const;
