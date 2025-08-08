@@ -3,20 +3,21 @@
 //
 
 #pragma once
+#include <optional>
 
 namespace stm32 {
 
     template<typename T>
     class Result {
-        explicit Result(const bool successful, const char* message, const T result) : successful(successful), message(message), result(result) {}
+        Result(const bool successful, const char* message, const std::optional<T> result) : successful(successful), message(message), result(result) {}
 
     public:
         bool successful;
         const char* message;
-        T result;
+        std::optional<T> result;
 
         [[nodiscard]] static Result ok(T result) { return{true, nullptr, result}; }
-        [[nodiscard]] static Result fail(const char* message) { return{false, message, T{}}; }
+        [[nodiscard]] static Result fail(const char* message) { return{false, message, std::nullopt}; }
 
         bool operator==(const Result& other) const {
             return this->successful == other.successful && this->result == other.result;

@@ -35,6 +35,8 @@ set(SOURCES
         Inc/stm/sys/Crc.h
         Src/stm/sys/crc/CrcPolynomialBuilder.cpp
         Src/stm/sys/crc/Crc.cpp
+        Inc/stm/sys/Device.h
+        Src/stm/sys/Device.cpp
 )
 
 add_executable(cplusplus ${SOURCES})
