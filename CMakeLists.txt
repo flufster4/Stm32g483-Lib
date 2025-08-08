@@ -37,6 +37,8 @@ set(SOURCES
         Src/stm/sys/crc/Crc.cpp
         Inc/stm/sys/Device.h
         Src/stm/sys/Device.cpp
+        Inc/stm/sys/VRefBuf.h
+        Src/stm/sys/VRefBuf.cpp
 )
 
 add_executable(cplusplus ${SOURCES})
