@@ -2,7 +2,7 @@
 // Created by Markian on 8/7/2025.
 //
 
-#include "../../../Inc/stm/sys/Crc.h"
+#include "../../../../Inc/stm/sys/Crc.h"
 
 namespace stm32::system::crc {
 
