@@ -41,6 +41,10 @@ set(SOURCES
         Src/stm/sys/VRefBuf.cpp
         Inc/stm/sys/Cordic.h
         Src/stm/sys/cordic/CordicConfigurationBuilder.cpp
+        Src/stm/sys/cordic/Cordic.cpp
+        Inc/stm/Bit.h
+        Inc/stm/sys/Nvic.h
+        Src/stm/sys/Nvic.cpp
 )
 
 add_executable(cplusplus ${SOURCES})

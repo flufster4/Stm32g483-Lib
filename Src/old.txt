@@ -1,0 +1,117 @@
+ digital::gpio::Gpio gpioA(0x4800'0000);
+    digital::gpio::GpioPinConfiguration outputPinConfig{};
+    digital::gpio::GpioPinConfiguration dacPinConfig(digital::gpio::PinMode::Analog);
+	digital::gpio::GpioPinConfiguration afPinConfig(
+		digital::gpio::PinMode::Alternative,
+		digital::gpio::PinType::PushPull,
+		digital::gpio::PinSpeed::VeryHigh,
+		digital::gpio::PinPull::None,
+		digital::gpio::PinAlternativeFunction::AF1
+	);
+
+    analog::dac::Dac dac1(0x5000'0800);
+    analog::dac::DacChannelConfiguration dac1configuration = {};
+
+    analog::adc::Adc adc1(0x5000'0000);
+
+	system::dma::Dma dma1(0x4002'0000);
+	system::dma::DmaMux dmamux(0x4002'0800);
+
+	system::tim::GeneralPurposeTimer tim2(0x4000'0000, true);
+
+    rcc->AHB2ENR |= 0x1; //gpio a
+    rcc->AHB2ENR |= 0x1 << 16; //dac 1
+	rcc->CCIPR &= ~(0b11 << 28);
+	rcc->CCIPR |= 0b10 << 28; //adc 1 clock selection
+    rcc->AHB2ENR |= 0x1 << 13; //adc 1
+	rcc->AHB1ENR |= 0x1; //dma 1
+	rcc->AHB1ENR |= 0x1 << 2; //dmamux
+	rcc->APB1ENR1 |= 0x1; //tim 2
+    asm("nop; nop; nop");
+
+    gpioA.configureGpio(digital::gpio::Pin::PIN_0, dacPinConfig);
+    gpioA.configureGpio(digital::gpio::Pin::PIN_4, dacPinConfig);
+	gpioA.configureGpio(digital::gpio::Pin::PIN_1, afPinConfig);
+
+    dac1.disable(analog::dac::Channel::DUAL);
+    dac1.configure(dac1configuration, analog::dac::Channel::DUAL);
+    dac1.enable(analog::dac::Channel::DUAL);
+
+    adc1.setDeepPowerDown(false);
+    adc1.setVoltageRegulator(true);
+    for (volatile uint32_t i = 100000; i > 0; i--) {}
+	(void) adc1.calibrateAdc();
+
+    adc1.setSamplingTime(analog::adc::AdcSamplingTime::CYCLES_92_5, 1);
+    analog::adc::AdcConversionSequence conversionSequence = analog::adc::AdcConversionSequenceBuilder(1).build();
+    adc1.setConversionSequence(conversionSequence);
+
+	analog::adc::AdcConfiguration adcConfig = analog::adc::AdcConfigurationBuilder()
+		.enableDma(true, true)
+		.enableContinuousConversionMode()
+		.setDataResolution(analog::adc::AdcDataResolution::TWELVE_BIT)
+		.enableDiscontinuousConversionMode(false, false, 0)
+		.build();
+	adc1.configureAdc(adcConfig);
+
+	dma1.disableChannel(system::dma::DmaChannel::CHANNEL_1);
+
+	system::dma::DmaChannelConfiguration dmaConfig = system::dma::DmaChannelConfigurationBuilder()
+		.setPriority(system::dma::DmaChannelPriority::VERY_HIGH)
+		.enableCircularMode()
+		.enableIncrementMode(false, true)
+		.setNumberOfData(16)
+		.setDataSize(system::dma::DmaDataSize::SIXTEEN_BIT, system::dma::DmaDataSize::SIXTEEN_BIT)
+		.setDataAddress(adc1.getDrAddress(), (uint32_t*)adc_buffer)
+		.build();
+	dma1.configureChannel(dmaConfig, system::dma::DmaChannel::CHANNEL_1);
+
+	system::dma::DmaMuxChannelConfiguration dmamuxConfig = system::dma::DmaMuxChannelConfigurationBuilder()
+		.setDmaRequest(system::dma::DmaMuxDmaInput::ADC1)
+		.setNumberOfRequests(1)
+		.build();
+	dmamux.configureChannel(dmamuxConfig, system::dma::DmaMuxChannel::DMA1_CHANNEL1);
+
+	adc1.enable();
+	adc1.startConversion();
+	dma1.enableChannel(system::dma::DmaChannel::CHANNEL_1);
+
+	tim2.stopCounter();
+
+	system::tim::GeneralPurposeTimerConfiguration tim2_configuration = system::tim::GeneralPurposeTimerConfigurationBuilder().build();
+	tim2.configure(tim2_configuration);
+
+	system::tim::GeneralPurposeTimerOutputCompareConfiguration cc1_compare_configuration = {
+		system::tim::GeneralPurposeTimerCaptureCompareSelection::OUTPUT,
+		false,
+		true,
+		system::tim::GeneralPurposeTimerOutputCompareMode::PWM_MODE_1,
+		false
+	};
+	tim2.configureOutputCompareChannel(cc1_compare_configuration, system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2);
+	tim2.enableCaptureCompareChannel(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2, false);
+
+	tim2.setClockPrescaler(100);
+	tim2.setAutoReloadValue(100);
+	tim2.setOutputCompareValue(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2, 25);
+
+	tim2.startCounter();
+
+    /* Loop forever */
+	for(;;) {
+		dac1.setOutputValue(
+			adc_buffer[0],
+			analog::dac::Channel::CHANNEL1
+		);
+		uint32_t adc_sum = 0;
+		const int samples = 16;
+
+		for (int i = 0; i < samples; i++) {
+		    adc_sum += adc_buffer[i];
+		}
+
+		uint32_t adc_avg = adc_sum / samples;
+		uint32_t val = (adc_avg * 100) / 4095;
+
+		tim2.setOutputCompareValue(system::tim::GeneralPurposeTimerCaptureCompareChannel::CC2, val*2);
+	}

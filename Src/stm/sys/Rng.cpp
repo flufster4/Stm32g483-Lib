@@ -3,8 +3,7 @@
 //
 
 #include "../../../Inc/stm/sys/Rng.h"
-
-#define EXTRACT_BITS(var, pos, mask) ((var & (mask << pos)) >> pos)
+#include "../../../Inc/stm/Bit.h"
 
 namespace stm32::system::rng {
 
@@ -36,11 +35,11 @@ namespace stm32::system::rng {
 
     RngStatus Rng::getStatus() const {
         return RngStatus{
-            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 0, 1)),
-            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 1, 1)),
-            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 2, 1)),
-            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 5, 1)),
-            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 6, 1))
+            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 0, 1U)),
+            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 1, 1U)),
+            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 2, 1U)),
+            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 5, 1U)),
+            static_cast<bool>(EXTRACT_BITS(rngRegisters->SR, 6, 1U))
         };
     }
 

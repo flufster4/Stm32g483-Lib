@@ -19,7 +19,7 @@ namespace stm32::system::device {
         return static_cast<uint8_t>(*uidr & 0xFF);
     }
 
-     const char* getDeviceLotNumber() {
+    const char* getDeviceLotNumber() {
         static char lotNumber[8];
 
         auto* uidr = reinterpret_cast<const volatile uint32_t*>(0x1FFF'7594);

@@ -23,18 +23,41 @@ namespace stm32::system::cordic {
         return *this;
     }
 
-    CordicConfigurationBuilder &CordicConfigurationBuilder::enableReadyInterrupt(bool enable) {
+    CordicConfigurationBuilder &CordicConfigurationBuilder::enableReadyInterrupt(const bool enable) {
         configuration.enableReadyInterrupt = enable;
         return *this;
     }
 
-    CordicConfigurationBuilder &CordicConfigurationBuilder::enableDma(bool readRequest, bool writeRequest) {
+    CordicConfigurationBuilder &CordicConfigurationBuilder::enableDma(const bool readRequest, const bool writeRequest) {
         configuration.enableDmaReadRequest = readRequest;
         configuration.enableDmaWriteRequest = writeRequest;
         return *this;
     }
 
+    CordicConfigurationBuilder &CordicConfigurationBuilder::setDataCount(const bool twoResults, const bool twoArguments) {
+        configuration.two32bitArguments = false;
+        configuration.two32bitArguments = false;
 
+        if (!configuration.sixteenBitArguments)
+            configuration.two32bitArguments = twoArguments;
+        if (!configuration.sixteenBitOutput)
+            configuration.two32bitResults = twoResults;
+
+        return *this;
+    }
+
+    CordicConfigurationBuilder &CordicConfigurationBuilder::setDataWidth(const bool sixteenBitResults, const bool sixteenBitArguments) {
+        configuration.sixteenBitArguments = sixteenBitArguments;
+        configuration.sixteenBitOutput = sixteenBitResults;
+
+        if (sixteenBitArguments && configuration.two32bitArguments)
+            configuration.two32bitArguments = false;
+        if (sixteenBitResults && configuration.two32bitResults)
+            configuration.two32bitResults = false;
+
+        return *this;
+    }
+    
     CordicConfiguration CordicConfigurationBuilder::build() const {
         return configuration;
     }

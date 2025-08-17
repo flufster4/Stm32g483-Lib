@@ -3,7 +3,10 @@
 //
 
 #pragma once
+
 #include <cstdint>
+
+
 
 namespace stm32::system::cordic {
 
@@ -25,7 +28,7 @@ namespace stm32::system::cordic {
     };
 
     struct CordicResult {
-        uint32_t result1, result2;
+        int32_t result1, result2;
     };
 
     struct CordicConfiguration {
@@ -61,11 +64,13 @@ namespace stm32::system::cordic {
     public:
         explicit Cordic(const uint32_t baseAddress = 0x4002'0C00) : cordicRegisters(reinterpret_cast<CordicRegisters*>(baseAddress)) {}
 
-        void configure(CordicConfiguration& configuration) const;
+        void configure(const CordicConfiguration& configuration) const;
         [[nodiscard]] CordicConfiguration getConfiguration() const;
 
         void setArguments(uint16_t arg1, uint16_t arg2) const;
         void setArguments(uint32_t arg1, uint32_t arg2) const;
         [[nodiscard]] CordicResult getResults() const;
+
+        [[nodiscard]] bool isReady() const;
     };
 }

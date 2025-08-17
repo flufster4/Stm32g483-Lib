@@ -2,9 +2,8 @@
 // Created by Markian on 8/1/2025.
 //
 
+#include "../../../../Inc/stm/Bit.h"
 #include "../../../../Inc/stm/sys/GeneralPurposeTim.h"
-
-#define EXTRACT_BITS(var, pos, mask) ((var & (mask << pos)) >> pos)
 
 namespace stm32::system::tim {
 
@@ -79,7 +78,7 @@ namespace stm32::system::tim {
         *ccmr |= (static_cast<uint8_t>(configuration.ccSelection) << offset) |
             (configuration.fastEnable << (offset + 2)) |
             (configuration.preloadCCR << (offset + 3)) |
-            (EXTRACT_BITS(static_cast<uint8_t>(configuration.mode), 0, 0x7) << (offset + 4)) |
+            (EXTRACT_BITS(static_cast<uint8_t>(configuration.mode), 0, MASK<3>) << (offset + 4)) |
             (configuration.clearEnable << (offset + 7)) |
             (EXTRACT_BITS(static_cast<uint8_t>(configuration.mode), 3, 1) << (offset + 16));
     }
@@ -94,9 +93,9 @@ namespace stm32::system::tim {
             offset = 8;
 
         return GeneralPurposeTimerInputCaptureConfiguration{
-            static_cast<GeneralPurposeTimerCaptureCompareSelection>(EXTRACT_BITS(*ccmr, offset, 0x3)),
-            static_cast<GeneralPurposeTimerInputCapturePrescaler>(EXTRACT_BITS(*ccmr, offset + 2, 0x3)),
-            static_cast<GeneralPurposeTimerInputCaptureFilter>(EXTRACT_BITS(*ccmr, offset + 4, 0xF)),
+            static_cast<GeneralPurposeTimerCaptureCompareSelection>(EXTRACT_BITS(*ccmr, offset, MASK<2>)),
+            static_cast<GeneralPurposeTimerInputCapturePrescaler>(EXTRACT_BITS(*ccmr, offset + 2, MASK<2>)),
+            static_cast<GeneralPurposeTimerInputCaptureFilter>(EXTRACT_BITS(*ccmr, offset + 4, MASK<4>)),
         };
     }
 
