@@ -39,6 +39,8 @@ set(SOURCES
         Src/stm/sys/Device.cpp
         Inc/stm/sys/VRefBuf.h
         Src/stm/sys/VRefBuf.cpp
+        Inc/stm/sys/Cordic.h
+        Src/stm/sys/cordic/CordicConfigurationBuilder.cpp
 )
 
 add_executable(cplusplus ${SOURCES})
